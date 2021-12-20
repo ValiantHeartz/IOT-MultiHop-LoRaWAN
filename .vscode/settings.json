@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "atomic": "cpp",
+        "charconv": "cpp",
+        "cstdint": "cpp",
+        "stop_token": "cpp",
+        "type_traits": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
+}
