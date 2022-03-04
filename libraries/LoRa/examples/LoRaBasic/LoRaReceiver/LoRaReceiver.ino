@@ -40,10 +40,10 @@
 
 
 #define RX_TIMEOUT_VALUE                            1000
-#define BUFFER_SIZE                                 30 // Define the payload size here
+#define BUFFER_SIZE                                 50 // Define the payload size here
 
 char txpacket[BUFFER_SIZE];
-char rxpacket[BUFFER_SIZE];
+uint8_t rxpacket[BUFFER_SIZE];
 
 static RadioEvents_t RadioEvents;
 
@@ -84,9 +84,10 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
     rssi=rssi;
     rxSize=size;
     memcpy(rxpacket, payload, size );
-    rxpacket[size]='\0';
+    //rxpacket[size]='\0';
     turnOnRGB(COLOR_RECEIVED,0);
     Radio.Sleep( );
-    Serial.printf("\r\nreceived packet \"%s\" with rssi %d , length %d\r\n",rxpacket,rssi,rxSize);
+    Serial.print(rxpacket[49]);
+    //Serial.printf("\r\nreceived packet \"%s\" with rssi %d , length %d\r\n",rxpacket,rssi,rxSize);
 
 }

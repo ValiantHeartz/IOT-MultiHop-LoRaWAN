@@ -4,7 +4,16 @@
         "charconv": "cpp",
         "cstdint": "cpp",
         "stop_token": "cpp",
-        "type_traits": "cpp"
+        "type_traits": "cpp",
+        "sx126x-board.h": "c",
+        "rtc-board.h": "c",
+        "low_power.h": "c",
+        "hw.h": "c",
+        "debug.h": "c",
+        "hw_conf.h": "c",
+        "*.tcc": "cpp",
+        "istream": "cpp",
+        "ostream": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

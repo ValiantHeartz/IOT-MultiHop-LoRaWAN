@@ -129,6 +129,8 @@ void loop()
       pinMode(VBAT_ADC_CTL, INPUT);
 
       state = TX;
+      Serial.print("Battery:");
+      Serial.println(voltage);
       break;
     }
      default:

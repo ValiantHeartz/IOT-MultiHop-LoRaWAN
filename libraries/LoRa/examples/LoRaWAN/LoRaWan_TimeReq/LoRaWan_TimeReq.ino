@@ -16,10 +16,9 @@ uint8_t appEui[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 uint8_t appKey[] = { 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x88, 0x66, 0x01 };
 
 /* ABP para*/
-uint8_t nwkSKey[] = { 0x15, 0xb1, 0xd0, 0xef, 0xa4, 0x63, 0xdf, 0xbe, 0x3d, 0x11, 0x18, 0x1e, 0x1e, 0xc7, 0xda,0x85 };
-uint8_t appSKey[] = { 0xd7, 0x2c, 0x78, 0x75, 0x8c, 0xdc, 0xca, 0xbf, 0x55, 0xee, 0x4a, 0x77, 0x8d, 0x16, 0xef,0x67 };
-uint32_t devAddr =  ( uint32_t )0x007e6ae1;
-
+uint8_t nwkSKey[] = { 0xC1, 0x39, 0xFB, 0x90, 0x25, 0x3A, 0xD0, 0xD3, 0xD9, 0x00, 0x1E, 0x28, 0xFD, 0xF9, 0x47,0x52 };
+uint8_t appSKey[] = { 0x61, 0x8B, 0x3F, 0x9E, 0x0E, 0x97, 0x3B, 0x97, 0x93, 0x5E, 0x39, 0x96, 0x9A, 0x0E, 0xF3,0x20 };
+uint32_t devAddr =  ( uint32_t )0x2800F603;
 /*LoraWan channelsmask, default channels 0-7*/ 
 uint16_t userChannelsMask[6]={ 0x00FF,0x0000,0x0000,0x0000,0x0000,0x0000 };
 
@@ -30,7 +29,7 @@ LoRaMacRegion_t loraWanRegion = ACTIVE_REGION;
 DeviceClass_t  loraWanClass = LORAWAN_CLASS;
 
 /*the application data transmission duty cycle.  value in [ms].*/
-uint32_t appTxDutyCycle = 15000;
+uint32_t appTxDutyCycle = 1500;
 
 /*OTAA or ABP*/
 bool overTheAirActivation = LORAWAN_NETMODE;
@@ -90,7 +89,7 @@ bool timeReq = true;
 
 void dev_time_updated()
 {
-  printf("Once device time updated, this function run\r\n");
+  Serial.println("Once device time updated, this function run\r\n");
 }
 
 void setup() {
@@ -130,11 +129,12 @@ void loop()
       Serial.printf("Unix time:%u.%d\r\n",(unsigned int)sysTimeCurrent.Seconds, sysTimeCurrent.SubSeconds);
       if(timeReq)
       {
-        timeReq = false;
+        //timeReq = false;
         MlmeReq_t mlmeReq;  
         mlmeReq.Type = MLME_DEVICE_TIME;
         LoRaMacMlmeRequest( &mlmeReq );
         Serial.println("This uplink added time req.");
+		delay(100);
       }
 			prepareTxFrame( appPort );
 			LoRaWAN.send();

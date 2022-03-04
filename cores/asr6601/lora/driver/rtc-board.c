@@ -162,6 +162,7 @@ void RtcInit( void )
         
         RtcInitialized = true;
     }
+    Serial.print("From 6601");
 }
 
 void RtcSetTimeout( uint32_t timeout )
@@ -352,7 +353,7 @@ TimerTime_t RtcConvertMsToTick( TimerTime_t timeoutValue )
     return( ( TimerTime_t )retVal );
 }
 
-static RtcCalendar_t RtcGetCalendar( void )
+RtcCalendar_t RtcGetCalendar( void )
 {
     RtcCalendar_t now;
     rtc_get_calendar(&now.CalendarTime);

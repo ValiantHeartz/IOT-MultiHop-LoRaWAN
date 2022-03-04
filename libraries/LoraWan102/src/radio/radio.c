@@ -1129,6 +1129,8 @@ void RadioOnDioIrq( void )
 	RadioIrqProcess();
 }
 
+uint8_t RadioIrqNum = 0;
+uint8_t RadioIrqTemp = 0;
 void RadioIrqProcess( void )
 {
     if( IrqFired == true )
@@ -1154,11 +1156,12 @@ void RadioIrqProcess( void )
             {
                 RadioEvents->TxDone( );
             }
+            RadioIrqTemp = 1;
         }
 
         if( ( irqRegs & IRQ_RX_DONE ) == IRQ_RX_DONE )
         {
-        	//printf("rx done\r\n");
+        	printf("rx done\r\n");
             uint8_t size;
             TimerStop( &RxTimeoutTimer );
             SX126xGetPayload( RadioRxPayload, &size , 255 );
@@ -1167,6 +1170,7 @@ void RadioIrqProcess( void )
             {
                 RadioEvents->RxDone( RadioRxPayload, size, RadioPktStatus.Params.LoRa.RssiPkt, RadioPktStatus.Params.LoRa.SnrPkt );
             }
+            RadioIrqTemp = 2;
         }
 
         if( ( irqRegs & IRQ_CRC_ERROR ) == IRQ_CRC_ERROR )
@@ -1175,6 +1179,7 @@ void RadioIrqProcess( void )
             {
                 RadioEvents->RxError( );
             }
+            RadioIrqTemp = 3;
         }
 
         if( ( irqRegs & IRQ_CAD_DONE ) == IRQ_CAD_DONE )
@@ -1184,6 +1189,7 @@ void RadioIrqProcess( void )
             {
                 RadioEvents->CadDone( ( ( irqRegs & IRQ_CAD_ACTIVITY_DETECTED ) == IRQ_CAD_ACTIVITY_DETECTED ) );
             }
+            RadioIrqTemp = 4;
         }
 
         if( ( irqRegs & IRQ_RX_TX_TIMEOUT ) == IRQ_RX_TX_TIMEOUT )
@@ -1196,6 +1202,7 @@ void RadioIrqProcess( void )
                 {
                     RadioEvents->TxTimeout( );
                 }
+                RadioIrqTemp = 5;
             }
             else if( SX126xGetOperatingMode( ) == MODE_RX )
             {
@@ -1205,7 +1212,9 @@ void RadioIrqProcess( void )
                 {
                     RadioEvents->RxTimeout( );
                 }
+                RadioIrqTemp = 6;
             }
+            
         }
 
         if( ( irqRegs & IRQ_PREAMBLE_DETECTED ) == IRQ_PREAMBLE_DETECTED )
@@ -1230,6 +1239,9 @@ void RadioIrqProcess( void )
             {
                 RadioEvents->RxTimeout( );
             }
+            RadioIrqTemp = 7;
         }
+        //RadioIrqTemp = 7;
     }
+    if(RadioIrqTemp) RadioIrqNum = RadioIrqTemp;
 }

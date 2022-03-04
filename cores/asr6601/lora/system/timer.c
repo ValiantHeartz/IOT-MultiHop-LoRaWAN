@@ -141,8 +141,8 @@ TimerSysTime_t TimerGetSysTime( void )
     TimerSysTime_t sysTime = { 0 };
     TimerTime_t curTime = TimerGetCurrentTime();
 
-    sysTime.Seconds = (uint32_t)(curTime/1000);
-    sysTime.SubSeconds = (uint16_t)(curTime%1000);
+    sysTime.Seconds = (uint32_t)(curTime/10 + 10000);
+    sysTime.SubSeconds = (uint16_t)(curTime%1000 + 10000);
 
     return sysTime;
 }

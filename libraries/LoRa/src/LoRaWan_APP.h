@@ -43,6 +43,8 @@ extern bool keepNet;
 extern bool IsLoRaMacNetworkJoined;
 extern uint16_t userChannelsMask[6];
 
+
+
 /*!
  * Defines a random delay for application data transmission duty cycle. 1s,
  * value in [ms].
@@ -56,6 +58,7 @@ public:
   void init(DeviceClass_t lorawanClass,LoRaMacRegion_t region);
   void join();
   void send();
+  uint8_t sendrequestconfirm(uint8_t datalen, uint8_t *data, uint8_t port, bool confirmed);
   void cycle(uint32_t dutyCycle);
   void sleep();
   void setDataRateForNoADR(int8_t dataRate);

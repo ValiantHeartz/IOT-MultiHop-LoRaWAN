@@ -10,7 +10,7 @@ menu.LORAWAN_RGB=LORAWAN_RGB
 menu.LORAWAN_DebugLevel=LoRaWan Debug Level
 ##############################################################
 
-CubeCell-Board.name=CubeCell-Board（HTCC-AB01）
+CubeCell-Board.name=CubeCell-Board（HTCC-AB01�?
 
 CubeCell-Board.upload.tool=CubeCellflash
 CubeCell-Board.upload.maximum_size=131072
@@ -96,7 +96,7 @@ CubeCell-Board.menu.LORAWAN_DebugLevel.2=Freq && DIO
 CubeCell-Board.menu.LORAWAN_DebugLevel.2.build.LORAWAN_DebugLevel=2
 ##############################################################
 
-CubeCell-Capsule.name=CubeCell-Capsule（HTCC-AC0X）
+CubeCell-Capsule.name=CubeCell-Capsule（HTCC-AC0X�?
 
 CubeCell-Capsule.upload.tool=CubeCellflash
 CubeCell-Capsule.upload.maximum_size=131072
@@ -183,7 +183,7 @@ CubeCell-Capsule.menu.LORAWAN_DebugLevel.2=Freq && DIO
 CubeCell-Capsule.menu.LORAWAN_DebugLevel.2.build.LORAWAN_DebugLevel=2
 ##############################################################
 
-CubeCell-Module.name=CubeCell-Module（HTCC-AM01）
+CubeCell-Module.name=CubeCell-Module（HTCC-AM01�?
 
 CubeCell-Module.upload.tool=CubeCellflash
 CubeCell-Module.upload.maximum_size=131072
@@ -268,7 +268,7 @@ CubeCell-Module.menu.LORAWAN_DebugLevel.2.build.LORAWAN_DebugLevel=2
 
 ###############################
 
-CubeCell-BoardPlus.name=CubeCell-Board Plus（HTCC-AB02）
+CubeCell-BoardPlus.name=CubeCell-Board Plus（HTCC-AB02�?
 
 CubeCell-BoardPlus.upload.tool=CubeCellflash
 CubeCell-BoardPlus.upload.maximum_size=131072
@@ -281,14 +281,14 @@ CubeCell-BoardPlus.build.mcu=ASR6502
 CubeCell-BoardPlus.build.f_cpu=48000000L
 CubeCell-BoardPlus.build.variant=CubeCell-BoardPlus
 
-CubeCell-BoardPlus.menu.LORAWAN_REGION.0=REGION_AS923(AS1)
-CubeCell-BoardPlus.menu.LORAWAN_REGION.0.build.band=REGION_AS923_AS1
+CubeCell-BoardPlus.menu.LORAWAN_REGION.0=REGION_CN470
+CubeCell-BoardPlus.menu.LORAWAN_REGION.0.build.band=REGION_CN470
 CubeCell-BoardPlus.menu.LORAWAN_REGION.1=REGION_AS923(AS2)
 CubeCell-BoardPlus.menu.LORAWAN_REGION.1.build.band=REGION_AS923_AS2
 CubeCell-BoardPlus.menu.LORAWAN_REGION.2=REGION_AU915
 CubeCell-BoardPlus.menu.LORAWAN_REGION.2.build.band=REGION_AU915
-CubeCell-BoardPlus.menu.LORAWAN_REGION.3=REGION_CN470
-CubeCell-BoardPlus.menu.LORAWAN_REGION.3.build.band=REGION_CN470
+CubeCell-BoardPlus.menu.LORAWAN_REGION.3=REGION_AS923(AS1)
+CubeCell-BoardPlus.menu.LORAWAN_REGION.3.build.band=REGION_AS923_AS1
 CubeCell-BoardPlus.menu.LORAWAN_REGION.4=REGION_CN779
 CubeCell-BoardPlus.menu.LORAWAN_REGION.4.build.band=REGION_CN779
 CubeCell-BoardPlus.menu.LORAWAN_REGION.5=REGION_EU433
@@ -316,10 +316,10 @@ CubeCell-BoardPlus.menu.LORAWAN_DEVEUI.0.build.LORAWAN_DEVEUI_AUTO=0
 CubeCell-BoardPlus.menu.LORAWAN_DEVEUI.1=Generate By ChipID
 CubeCell-BoardPlus.menu.LORAWAN_DEVEUI.1.build.LORAWAN_DEVEUI_AUTO=1
 
-CubeCell-BoardPlus.menu.LORAWAN_NETMODE.0=OTAA
-CubeCell-BoardPlus.menu.LORAWAN_NETMODE.0.build.LORAWAN_NETMODE=true
-CubeCell-BoardPlus.menu.LORAWAN_NETMODE.1=ABP
-CubeCell-BoardPlus.menu.LORAWAN_NETMODE.1.build.LORAWAN_NETMODE=false
+CubeCell-BoardPlus.menu.LORAWAN_NETMODE.0=ABP
+CubeCell-BoardPlus.menu.LORAWAN_NETMODE.0.build.LORAWAN_NETMODE=false
+CubeCell-BoardPlus.menu.LORAWAN_NETMODE.1=OTAA
+CubeCell-BoardPlus.menu.LORAWAN_NETMODE.1.build.LORAWAN_NETMODE=true
 
 CubeCell-BoardPlus.menu.LORAWAN_ADR.0=ON
 CubeCell-BoardPlus.menu.LORAWAN_ADR.0.build.LORAWAN_ADR=true
@@ -336,10 +336,10 @@ CubeCell-BoardPlus.menu.LORAWAN_Net_Reserve.0.build.LORAWAN_Net_Reserve=false
 CubeCell-BoardPlus.menu.LORAWAN_Net_Reserve.1=ON
 CubeCell-BoardPlus.menu.LORAWAN_Net_Reserve.1.build.LORAWAN_Net_Reserve=true
 
-CubeCell-BoardPlus.menu.LORAWAN_AT_SUPPORT.0=ON
-CubeCell-BoardPlus.menu.LORAWAN_AT_SUPPORT.0.build.LORAWAN_AT_SUPPORT=1
-CubeCell-BoardPlus.menu.LORAWAN_AT_SUPPORT.1=OFF
-CubeCell-BoardPlus.menu.LORAWAN_AT_SUPPORT.1.build.LORAWAN_AT_SUPPORT=0
+CubeCell-BoardPlus.menu.LORAWAN_AT_SUPPORT.0=OFF
+CubeCell-BoardPlus.menu.LORAWAN_AT_SUPPORT.0.build.LORAWAN_AT_SUPPORT=0
+CubeCell-BoardPlus.menu.LORAWAN_AT_SUPPORT.1=ON
+CubeCell-BoardPlus.menu.LORAWAN_AT_SUPPORT.1.build.LORAWAN_AT_SUPPORT=1
 
 CubeCell-BoardPlus.menu.LORAWAN_RGB.1=ACTIVE
 CubeCell-BoardPlus.menu.LORAWAN_RGB.1.build.RGB=1
@@ -354,7 +354,7 @@ CubeCell-BoardPlus.menu.LORAWAN_DebugLevel.2=Freq && DIO
 CubeCell-BoardPlus.menu.LORAWAN_DebugLevel.2.build.LORAWAN_DebugLevel=2
 ##############################################################
 
-CubeCell-GPS.name=CubeCell-GPS（HTCC-AB02S）
+CubeCell-GPS.name=CubeCell-GPS（HTCC-AB02S�?
 
 CubeCell-GPS.upload.tool=CubeCellflash
 CubeCell-GPS.upload.maximum_size=131072
@@ -441,7 +441,7 @@ CubeCell-GPS.menu.LORAWAN_DebugLevel.2=Freq && DIO
 CubeCell-GPS.menu.LORAWAN_DebugLevel.2.build.LORAWAN_DebugLevel=2
 ##############################################################
 
-CubeCell-ModulePlus.name=CubeCell-Module Plus（HTCC-AM02）
+CubeCell-ModulePlus.name=CubeCell-Module Plus（HTCC-AM02�?
 
 CubeCell-ModulePlus.upload.tool=CubeCellflash
 CubeCell-ModulePlus.upload.maximum_size=131072
@@ -524,7 +524,7 @@ CubeCell-ModulePlus.menu.LORAWAN_DebugLevel.1.build.LORAWAN_DebugLevel=1
 CubeCell-ModulePlus.menu.LORAWAN_DebugLevel.2=Freq && DIO
 CubeCell-ModulePlus.menu.LORAWAN_DebugLevel.2.build.LORAWAN_DebugLevel=2
 ###############################
-CubeCell-1/2AA.name=CubeCell-1/2AA Node（HTCC-AB02A）
+CubeCell-1/2AA.name=CubeCell-1/2AA Node（HTCC-AB02A�?
 
 CubeCell-1/2AA.upload.tool=CubeCellflash
 CubeCell-1/2AA.upload.maximum_size=131072
@@ -609,7 +609,7 @@ CubeCell-1/2AA.menu.LORAWAN_DebugLevel.2.build.LORAWAN_DebugLevel=2
 
 ###############################
 
-##CubeCell-Board-PRO.name=CubeCell-Board PRO（HTCC-AB03）
+##CubeCell-Board-PRO.name=CubeCell-Board PRO（HTCC-AB03�?
 
 ##CubeCell-Board-PRO.upload.tool=flash6601
 ##CubeCell-Board-PRO.upload.maximum_size=229376

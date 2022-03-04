@@ -33,8 +33,8 @@ public:
   bool isJoined() {return itsJoined;};
   void setJoined(bool joined) {itsJoined=joined;}
 
-  bool send(uint8_t datalen, uint8_t *data, uint8_t port, bool confirmed);
-
+  //bool send(uint8_t datalen, uint8_t *data, uint8_t port, bool confirmed);
+  int send(uint8_t datalen, uint8_t *data, uint8_t port, bool confirmed);
   void setAdaptiveDR(bool useadr) {itsUseADR=useadr;}  
   void setFixedDR(int8_t dr) {itsUseADR=false; itsDRForNoAdr=dr;}
 
@@ -57,6 +57,7 @@ extern "C" void turnOffRGB(void);
 extern "C" void downLinkDataHandle(McpsIndication_t *mcpsIndication);
 extern "C" void lwan_dev_params_update( void );
 extern "C" void dev_time_updated( void );
+extern "C" bool checkUserAt(char * cmd, char * content);
 
 extern LoRaWanMinimal LoRaWAN;
 

@@ -125,6 +125,8 @@ void RtcRecoverMcuStatus( void );
  */
 void RtcProcess( void );
 
+struct RtcCalendar_t;
+RtcCalendar_t RtcGetCalendar( void );
 #ifdef __cplusplus
 }
 #endif	

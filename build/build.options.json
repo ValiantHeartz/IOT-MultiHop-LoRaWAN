@@ -8,5 +8,5 @@
   "hardwareFolders": "D:\\Program Files (x86)\\Arduino\\hardware,C:\\Users\\zhoul\\AppData\\Local\\Arduino15\\packages",
   "otherLibrariesFolders": "D:\\OneDrive\\文档\\文档整理\\实验项目\\研究生毕设\\lora\\Arduino\\libraries",
   "runtime.ide.version": "10816",
-  "sketchLocation": "c:\\Users\\zhoul\\AppData\\Local\\Arduino15\\packages\\CubeCell\\hardware\\CubeCell\\1.3.0\\libraries\\LoRa\\myLoRa\\myLoRa.ino"
+  "sketchLocation": "c:\\Users\\zhoul\\AppData\\Local\\Arduino15\\packages\\CubeCell\\hardware\\CubeCell\\1.3.0\\libraries\\LoRa\\examples\\MyATLoRaWAN\\MyATLoRaWAN.ino"
 }

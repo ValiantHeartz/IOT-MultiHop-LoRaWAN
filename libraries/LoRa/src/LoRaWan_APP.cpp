@@ -85,11 +85,15 @@ bool modeLoraWan = true;
 /*!
  * Indicates if a new packet can be sent
  */
-static bool nextTx = true;
+bool nextTx = true;
 
-
+//sendrequestconfirm
+DeviceClass_t itsDeviceClass;
+uint8_t itsNumRetries=4;
+int8_t itsDRForNoAdr = 5;
 enum eDeviceState_LoraWan deviceState;
 
+static void wakeUpDummy() {}
 
 /*!
  * \brief   Prepares the payload of the frame
@@ -99,7 +103,7 @@ enum eDeviceState_LoraWan deviceState;
 bool SendFrame( void )
 {
 	lwan_dev_params_update();
-	
+	Serial.println("sendingframe...");
 	McpsReq_t mcpsReq;
 	LoRaMacTxInfo_t txInfo;
 
@@ -323,8 +327,8 @@ static void McpsIndication( McpsIndication_t *mcpsIndication )
 		default:
 			break;
 	}
-	printf( "downlink: rssi = %d, snr = %d, datarate = %d\r\n", mcpsIndication->Rssi, (int)mcpsIndication->Snr,(int)mcpsIndication->RxDoneDatarate);
-
+	printf( "downlink: rssi = %d, snr = %d, datarate = %d\r\n", mcpsIndication->Rssi, (int)mcpsIndication->Snr,(int)mcpsIndication->RxDoneDatarate);	
+	Serial.println("downlink recieved");
 	if(mcpsIndication->AckReceived)
 	{
 		downLinkAckHandle();
@@ -657,6 +661,67 @@ void LoRaWanClass::send()
 		}
 		nextTx = SendFrame( );
 	}
+}
+
+uint8_t LoRaWanClass::sendrequestconfirm(uint8_t datalen, uint8_t *data, uint8_t port, bool confirmed)
+{
+	MibRequestConfirm_t mibReq;
+	mibReq.Type = MIB_DEVICE_CLASS;
+	LoRaMacMibGetRequestConfirm( &mibReq );
+
+	if (itsDeviceClass != mibReq.Param.Class) {
+		mibReq.Param.Class = itsDeviceClass;
+		LoRaMacMibSetRequestConfirm( &mibReq );
+	}	
+
+	lwan_dev_params_update();
+	
+	McpsReq_t mcpsReq;
+	LoRaMacTxInfo_t txInfo;
+	defaultDrForNoAdr=itsDRForNoAdr;
+	
+	if ( LoRaMacQueryTxPossible( datalen, &txInfo ) != LORAMAC_STATUS_OK ) {
+		// Send empty frame in order to flush MAC commands
+		printf("payload length error ...\r\n");
+		mcpsReq.Type = MCPS_UNCONFIRMED;
+		mcpsReq.Req.Unconfirmed.fBuffer = NULL;
+		mcpsReq.Req.Unconfirmed.fBufferSize = 0;
+		mcpsReq.Req.Unconfirmed.Datarate = currentDrForNoAdr;
+	} else {
+		if (confirmed)	{
+			mcpsReq.Type = MCPS_CONFIRMED;
+			mcpsReq.Req.Confirmed.fPort = port;
+			mcpsReq.Req.Confirmed.fBuffer = data;
+			mcpsReq.Req.Confirmed.fBufferSize = datalen;
+			mcpsReq.Req.Confirmed.NbTrials = itsNumRetries;
+			mcpsReq.Req.Confirmed.Datarate = currentDrForNoAdr;
+		} else {
+			mcpsReq.Type = MCPS_UNCONFIRMED;
+			mcpsReq.Req.Unconfirmed.fPort = port;
+			mcpsReq.Req.Unconfirmed.fBuffer = data;
+			mcpsReq.Req.Unconfirmed.fBufferSize = datalen;
+			mcpsReq.Req.Unconfirmed.Datarate = currentDrForNoAdr;
+		}
+	}
+	uint32_t status=LoRaMacMcpsRequest( &mcpsReq );
+	if( status != LORAMAC_STATUS_OK )
+	{
+		printf("LoRaWanMinimal_APP.send: Bad LoRaMacMcpsRequest status, couldn't send %d", status);
+		return false;
+	}
+
+    TimerEvent_t pollStateTimer;
+    TimerInit( &pollStateTimer, wakeUpDummy );
+    TimerSetValue( &pollStateTimer, 100 );
+	uint8_t result = -1;
+	while (LoRaMacState!=LORAMAC_IDLE) {
+	  TimerStart( &pollStateTimer );
+	  lowPowerHandler( );
+	  TimerStop( &pollStateTimer );
+      Radio.IrqProcess( );
+	}
+
+	return true;		
 }
 
 void LoRaWanClass::cycle(uint32_t dutyCycle)

@@ -1,8 +1,8 @@
 #include <LoRaWanMinimal_APP.h>
 
-#if(AT_SUPPORT)
-#error "The LoRaWanMinimal library is configured for LORAWAN_AT_SUPPORT=OFF. Please disable."
-#endif
+// #if(AT_SUPPORT)
+// #error "The LoRaWanMinimal library is configured for LORAWAN_AT_SUPPORT=OFF. Please disable."
+// #endif
 
 #if defined( REGION_EU868 )
 #include "loramac/region/RegionEU868.h"
@@ -183,7 +183,67 @@ bool LoRaWanMinimal::joinABP(uint8_t* nwkSKey, uint8_t* appSKey, uint32_t devAdd
     return true;
 }
 
-bool LoRaWanMinimal::send(uint8_t datalen, uint8_t *data, uint8_t port, bool confirmed)
+// bool LoRaWanMinimal::send(uint8_t datalen, uint8_t *data, uint8_t port, bool confirmed)
+// {
+// 	MibRequestConfirm_t mibReq;
+// 	mibReq.Type = MIB_DEVICE_CLASS;
+// 	LoRaMacMibGetRequestConfirm( &mibReq );
+
+// 	if (itsDeviceClass != mibReq.Param.Class) {
+// 		mibReq.Param.Class = itsDeviceClass;
+// 		LoRaMacMibSetRequestConfirm( &mibReq );
+// 	}	
+
+// 	lwan_dev_params_update();
+	
+// 	McpsReq_t mcpsReq;
+// 	LoRaMacTxInfo_t txInfo;
+// 	defaultDrForNoAdr=itsDRForNoAdr;
+	
+// 	if ( LoRaMacQueryTxPossible( datalen, &txInfo ) != LORAMAC_STATUS_OK ) {
+// 		// Send empty frame in order to flush MAC commands
+// 		printf("payload length error ...\r\n");
+// 		mcpsReq.Type = MCPS_UNCONFIRMED;
+// 		mcpsReq.Req.Unconfirmed.fBuffer = NULL;
+// 		mcpsReq.Req.Unconfirmed.fBufferSize = 0;
+// 		mcpsReq.Req.Unconfirmed.Datarate = currentDrForNoAdr;
+// 	} else {
+// 		if (confirmed)	{
+// 			mcpsReq.Type = MCPS_CONFIRMED;
+// 			mcpsReq.Req.Confirmed.fPort = port;
+// 			mcpsReq.Req.Confirmed.fBuffer = data;
+// 			mcpsReq.Req.Confirmed.fBufferSize = datalen;
+// 			mcpsReq.Req.Confirmed.NbTrials = itsNumRetries;
+// 			mcpsReq.Req.Confirmed.Datarate = currentDrForNoAdr;
+// 		} else {
+// 			mcpsReq.Type = MCPS_UNCONFIRMED;
+// 			mcpsReq.Req.Unconfirmed.fPort = port;
+// 			mcpsReq.Req.Unconfirmed.fBuffer = data;
+// 			mcpsReq.Req.Unconfirmed.fBufferSize = datalen;
+// 			mcpsReq.Req.Unconfirmed.Datarate = currentDrForNoAdr;
+// 		}
+// 	}
+// 	uint32_t status=LoRaMacMcpsRequest( &mcpsReq );
+// 	if( status != LORAMAC_STATUS_OK )
+// 	{
+// 		printf("LoRaWanMinimal_APP.send: Bad LoRaMacMcpsRequest status, couldn't send %d", status);
+// 		return false;
+// 	}
+
+//     TimerEvent_t pollStateTimer;
+//     TimerInit( &pollStateTimer, wakeUpDummy );
+//     TimerSetValue( &pollStateTimer, 100 );
+// 	while (LoRaMacState!=LORAMAC_IDLE) {
+// 	  TimerStart( &pollStateTimer );
+// 	  lowPowerHandler( );
+// 	  TimerStop( &pollStateTimer );
+//       Radio.IrqProcess( );
+// 	}
+
+// 	return true;		
+// }
+
+int LoRaWanMinimal::send(uint8_t datalen, uint8_t *data, uint8_t port, bool confirmed)
 {
 	MibRequestConfirm_t mibReq;
 	mibReq.Type = MIB_DEVICE_CLASS;
@@ -227,20 +287,22 @@ bool LoRaWanMinimal::send(uint8_t datalen, uint8_t *data, uint8_t port, bool con
 	if( status != LORAMAC_STATUS_OK )
 	{
 		printf("LoRaWanMinimal_APP.send: Bad LoRaMacMcpsRequest status, couldn't send %d", status);
-		return false;
+		//return false;
+		return 0;
 	}
 
     TimerEvent_t pollStateTimer;
     TimerInit( &pollStateTimer, wakeUpDummy );
     TimerSetValue( &pollStateTimer, 100 );
+	int result = -1;
 	while (LoRaMacState!=LORAMAC_IDLE) {
 	  TimerStart( &pollStateTimer );
 	  lowPowerHandler( );
 	  TimerStop( &pollStateTimer );
-      Radio.IrqProcess( );
+      result = Radio.IrqProcess( );
 	}
 
-	return true;		
+	return result;		
 }
 
 void LoRaWanMinimal::setSubBand2()
@@ -348,7 +410,8 @@ static void McpsIndication( McpsIndication_t *mcpsIndication )
 	{
 		return;
 	}
-	printf( "Downlink/ACK received: rssi = %d, snr = %d, datarate = %d\r\n", mcpsIndication->Rssi, (int)mcpsIndication->Snr,(int)mcpsIndication->RxDatarate);
+	printf( "Downlink/ACK received:: rssi = %d, snr = %d, datarate = %d\r\n", mcpsIndication->Rssi, (int)mcpsIndication->Snr,(int)mcpsIndication->RxDatarate);
+	Serial.println("downlink received");
 #if (LoraWan_RGB==1)
 	turnOnRGB(COLOR_RECEIVED, 200);
 	turnOffRGB();
