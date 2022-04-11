@@ -26,7 +26,7 @@
 #define INSTRUCTION_UPLOADED_CONFIRM 4
 
 //#define ENDDEVICEID 3
-uint8_t ENDDEVICEID = 1;
+uint8_t ENDDEVICEID = 6;
 uint16_t rankIntervalTime = 5000;
 //static const uint16_t normalTransmitTime = 4000
 /**************************************************************************************************************************/
@@ -37,9 +37,9 @@ uint8_t appEui[] = {0x81, 0x00, 0x00, 0x00, 0xFF, 0xF0, 0x00, 0x01};
 uint8_t appKey[] = {0xD9, 0x0A, 0x1C, 0xD7, 0xE0, 0x88, 0x9A, 0x4C, 0x54, 0xEA, 0x4B, 0x56, 0x40, 0x47, 0x37, 0xBB};
 
 /* ABP para:3B*/ //c1-c2
-// uint8_t nwkSKey[] = {0xC1, 0x39, 0xFB, 0x90, 0x25, 0x3A, 0xD0, 0xD3, 0xD9, 0x00, 0x1E, 0x28, 0xFD, 0xF9, 0x47, 0x52};
-// uint8_t appSKey[] = {0x61, 0x8B, 0x3F, 0x9E, 0x0E, 0x97, 0x3B, 0x97, 0x93, 0x5E, 0x39, 0x96, 0x9A, 0x0E, 0xF3, 0x20};
-// uint32_t devAddr = (uint32_t)0x2800F603;
+uint8_t nwkSKey[] = {0xC2, 0x39, 0xFB, 0x90, 0x25, 0x3A, 0xD0, 0xD3, 0xD9, 0x00, 0x1E, 0x28, 0xFD, 0xF9, 0x47, 0x52};
+uint8_t appSKey[] = {0x61, 0x8B, 0x3F, 0x9E, 0x0E, 0x97, 0x3B, 0x97, 0x93, 0x5E, 0x39, 0x96, 0x9A, 0x0E, 0xF3, 0x20};
+uint32_t devAddr = (uint32_t)0x2800F603;
 
 /* ABP para:3a*/ //37-38
 // uint8_t nwkSKey[] = {0x37, 0x0B, 0xF7, 0x30, 0xB3, 0xE5, 0x70, 0xB7, 0x80, 0xC6, 0x8F, 0x44, 0xAA, 0xF8, 0xB5, 0x00};
@@ -47,9 +47,9 @@ uint8_t appKey[] = {0xD9, 0x0A, 0x1C, 0xD7, 0xE0, 0x88, 0x9A, 0x4C, 0x54, 0xEA, 
 // uint32_t devAddr = (uint32_t)0x2800F602;
 
 /*abp ttn*/
-uint8_t nwkSKey[] = {0x8D, 0x47, 0x77, 0x25, 0x91, 0x1B, 0xBE, 0x88, 0x38, 0x81, 0x26, 0x7A, 0x51, 0x15, 0xD3, 0x75};
-uint8_t appSKey[] = {0x55, 0x78, 0x2A, 0x3B, 0xE9, 0x6D, 0x2C, 0x31, 0x44, 0xDF, 0xB8, 0x36, 0xE9, 0x8D, 0x9A, 0xEC};
-uint32_t devAddr = (uint32_t)0x260BFFCF;
+// uint8_t nwkSKey[] = {0x8D, 0x47, 0x77, 0x25, 0x91, 0x1B, 0xBE, 0x88, 0x38, 0x81, 0x26, 0x7A, 0x51, 0x15, 0xD3, 0x75};
+// uint8_t appSKey[] = {0x55, 0x78, 0x2A, 0x3B, 0xE9, 0x6D, 0x2C, 0x31, 0x44, 0xDF, 0xB8, 0x36, 0xE9, 0x8D, 0x9A, 0xEC};
+// uint32_t devAddr = (uint32_t)0x260BFFCF;
 
 /*LoraWan channelsmask, default channels 0-7*/
 uint16_t userChannelsMask[6] = {0x0003, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000};
@@ -84,35 +84,18 @@ uint8_t confirmedNbTrials = 4; //lorawan 1.0.2-18.4
 uint8_t txPacket[BUFFER_SIZE] = {1,2,3};
 uint8_t rxpacket[BUFFER_SIZE];
 int16_t rssi = 0, rxSize = 0, snr = 0;
-extern SH1107Wire  display;
 
 /**************************************************************************************************************************/
 /*Functions*/
-// void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr);
-// void digitalClockDisplay();
-// bool checkUserAt(char *cmd, char *content);
-// static void prepareTxFrame(uint8_t port);
-// void RadioIrqParaInit();
-// void LoRaPhyInit();
-// void LoRaWANPhyInit();
-// uint8_t ReadBattery();
-// void WAMPLInfoInit();
-// //void PreparePacket(uint8_t insturction);
-// void SelectFatherEndDevice();
-// //void SetLowPowerTimer(uint32_t sleeptime);
-// //void WakeUpDevice();
-// uint32_t CalcAllDeviceStartTime();
-// void OpenRadioDuration(uint16_t duration);
-// //void LoraRandomSend(uint8_t networkingBroadcastnum, uint8_t INSTRUCTION, uint8_t destinationID);
 void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr);
 
 /**************************************************************************************************************************/
 /*Main Function*/
-#line 110 "c:\\Users\\zhoul\\AppData\\Local\\Arduino15\\packages\\CubeCell\\hardware\\CubeCell\\1.3.0\\libraries\\LoRa\\examples\\MyATLoRaWAN\\MyATLoRaWAN.ino"
+#line 93 "c:\\Users\\zhoul\\AppData\\Local\\Arduino15\\packages\\CubeCell\\hardware\\CubeCell\\1.3.0\\libraries\\LoRa\\examples\\MyATLoRaWAN\\MyATLoRaWAN.ino"
 void setup();
-#line 150 "c:\\Users\\zhoul\\AppData\\Local\\Arduino15\\packages\\CubeCell\\hardware\\CubeCell\\1.3.0\\libraries\\LoRa\\examples\\MyATLoRaWAN\\MyATLoRaWAN.ino"
+#line 133 "c:\\Users\\zhoul\\AppData\\Local\\Arduino15\\packages\\CubeCell\\hardware\\CubeCell\\1.3.0\\libraries\\LoRa\\examples\\MyATLoRaWAN\\MyATLoRaWAN.ino"
 void loop();
-#line 110 "c:\\Users\\zhoul\\AppData\\Local\\Arduino15\\packages\\CubeCell\\hardware\\CubeCell\\1.3.0\\libraries\\LoRa\\examples\\MyATLoRaWAN\\MyATLoRaWAN.ino"
+#line 93 "c:\\Users\\zhoul\\AppData\\Local\\Arduino15\\packages\\CubeCell\\hardware\\CubeCell\\1.3.0\\libraries\\LoRa\\examples\\MyATLoRaWAN\\MyATLoRaWAN.ino"
 void setup()
 {
   Serial.begin(115200);
@@ -228,6 +211,7 @@ void loop()
     networkedFlag = 0;
     RoutingInfoInit();
   }
+}
 
   void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr)
 {
@@ -267,7 +251,7 @@ void loop()
       ThisDeviceRoutingInfo.NeiborFatherEndDeviceNum++;
       ThisDeviceRoutingInfo.IfDeviceReceived[sourceDeviceID] = 1;
     }
-    UpdateTime(txPacket);
+    UpdateTime(rxpacket);
   }
   if(rxInstruction == INSTRUCTION_NETWORKED_CONFIRM && destinationDevice == ThisDeviceInfo.EndDeviceID && !ThisDeviceRoutingInfo.IfDeviceReceived[sourceDeviceID]){
     ThisDeviceRoutingInfo.SonEndDeviceID[ThisDeviceRoutingInfo.SonEndDeviceNum] = rxpacket[7];
