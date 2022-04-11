@@ -802,6 +802,7 @@ static void PrepareRxDoneAbort( void )
 void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 {
 	DIO_PRINTF("Event : Rx Done\r\n");
+    printf("\r\nlorawan receive packet with rssi %d , snr %d\r\n", rssi, snr);
 #ifdef CLASS_A_WOTA
 	if(wota_CadStarted)
 		wota_CadStarted = false;

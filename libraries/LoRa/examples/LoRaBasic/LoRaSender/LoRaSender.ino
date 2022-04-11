@@ -10,6 +10,7 @@
 
 #include "LoRaWan_APP.h"
 #include "Arduino.h"
+#include <TimeLib.h>
 
 /*
  * set LoraWan_RGB to 1,the RGB active in loraWan
@@ -20,9 +21,9 @@
 #define LoraWan_RGB 0
 #endif
 
-#define RF_FREQUENCY                                915000000 // Hz
+#define RF_FREQUENCY                                471900000 // Hz 471900000
 
-#define TX_OUTPUT_POWER                             14        // dBm
+#define TX_OUTPUT_POWER                             20       // dBm 10,14,17,20
 
 #define LORA_BANDWIDTH                              0         // [0: 125 kHz,
                                                               //  1: 250 kHz,
@@ -42,10 +43,11 @@
 #define RX_TIMEOUT_VALUE                            1000
 #define BUFFER_SIZE                                 30 // Define the payload size here
 
-char txpacket[BUFFER_SIZE];
-char rxpacket[BUFFER_SIZE];
+uint8_t txpacket[BUFFER_SIZE];
+uint8_t rxpacket[BUFFER_SIZE];
 
 static RadioEvents_t RadioEvents;
+void RadioIrqParaInit();
 
 double txNumber;
 
@@ -57,7 +59,7 @@ void setup() {
 
     txNumber=0;
     rssi=0;
-
+    RadioEvents.RxDone = OnRxDone;
     Radio.Init( &RadioEvents );
     Radio.SetChannel( RF_FREQUENCY );
     Radio.SetTxConfig( MODEM_LORA, TX_OUTPUT_POWER, 0, LORA_BANDWIDTH,
@@ -67,21 +69,18 @@ void setup() {
    }
 
 
-
+uint8_t num = 0;
 void loop()
 {
-	delay(1000);
-	txNumber += 0.01;
-	sprintf(txpacket,"%s","Hello world number");  //start a package
-//	sprintf(txpacket+strlen(txpacket),"%d",txNumber); //add to the end of package
-	
-	DoubleToString(txpacket,txNumber,3);	   //add to the end of package
-	
-	turnOnRGB(COLOR_SEND,0); //change rgb color
 
-	Serial.printf("\r\nsending packet \"%s\" , length %d\r\n",txpacket, strlen(txpacket));
-
-	Radio.Send( (uint8_t *)txpacket, strlen(txpacket) ); //send the package out	
+  txpacket[0] = minute();
+  txpacket[1] = second();
+  txpacket[7] = num++;
+  Serial.printf("%d,%d", minute(), second());
+  turnOnRGB(COLOR_SEND,10);
+	Radio.Send( (uint8_t *)txpacket, sizeof(txpacket)/sizeof(uint8_t) ); //send the package out
+  delay(100);
+  	
 }
 
 /**
@@ -99,4 +98,38 @@ void  DoubleToString( char *str, double double_num,unsigned int len) {
   sprintf(str + strlen(str), ".%d", (int)(fractpart)); //Decimal part
 }
 
+// 	delay(10);
+// 	txNumber += 0.01;
+// 	sprintf(txpacket,"%s","Hello world number");  //start a package
+// //	sprintf(txpacket+strlen(txpacket),"%d",txNumber); //add to the end of package
+	
+// 	DoubleToString(txpacket,txNumber,3);	   //add to the end of package
+	
+// 	turnOnRGB(COLOR_SEND,0); //change rgb color
 
+// 	Serial.printf("\r\nsending packet \"%s\" , length %d\r\n",txpacket, strlen(txpacket));
+
+// void RadioIrqParaInit()
+// {
+//   RadioIrqNum = 0;
+//   RadioIrqTemp = 0;
+//   onTxDone = 0;
+// }
+
+void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
+{
+    rssi=rssi;
+    rxSize=size;
+    memcpy(rxpacket, payload, size );
+    rxpacket[size]='\0';
+    turnOnRGB(COLOR_RECEIVED,0);
+    Radio.Sleep( );
+    // Serial.print("send time:");
+    // //Serial.printf("\r\nreceived packet \"%s\" with rssi %d , length %d\r\n",rxpacket,rssi,rxSize);
+    // for(uint8_t i = 0; i < size; i++){
+    //   Serial.printf("%d,", rxpacket[i]);
+    // }
+    Serial.print("receive time:");
+    Serial.printf("%d,%d", minute(), second());
+    Serial.println();
+}

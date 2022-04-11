@@ -13,7 +13,8 @@
         "hw_conf.h": "c",
         "*.tcc": "cpp",
         "istream": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "string": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

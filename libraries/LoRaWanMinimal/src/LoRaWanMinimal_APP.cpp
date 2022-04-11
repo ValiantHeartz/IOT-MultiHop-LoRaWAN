@@ -294,15 +294,14 @@ int LoRaWanMinimal::send(uint8_t datalen, uint8_t *data, uint8_t port, bool conf
     TimerEvent_t pollStateTimer;
     TimerInit( &pollStateTimer, wakeUpDummy );
     TimerSetValue( &pollStateTimer, 100 );
-	int result = -1;
 	while (LoRaMacState!=LORAMAC_IDLE) {
 	  TimerStart( &pollStateTimer );
 	  lowPowerHandler( );
 	  TimerStop( &pollStateTimer );
-      result = Radio.IrqProcess( );
+      Radio.IrqProcess( );
 	}
 
-	return result;		
+	return true;		
 }
 
 void LoRaWanMinimal::setSubBand2()

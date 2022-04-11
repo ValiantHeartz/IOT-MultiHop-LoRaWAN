@@ -63,64 +63,88 @@ void setup() {
     LoRaWAN.begin(LORAWAN_CLASS, ACTIVE_REGION);  //init LoRaMacInitialization -> init radioevents
     LoRaWAN.setAdaptiveDR(true);
     LoRaWAN.joinABP(nwkSKey, appSKey, devAddr);
-    int result = LoRaWAN.send(BUFFER_SIZE, txpacket, 1, requestack);
-    Serial.print("result: ");
-    Serial.println(result);
-    if(LoRaWAN.send(BUFFER_SIZE, txpacket, 1, requestack))
-    {
-        Serial.println("LoRaWAN Init Success!");
-        delay(100);
-        LoRaWANModeFlag = 1;
-    }
-    /*LoRa Phy init*/
-    if(LoRaWANModeFlag == 0)
-    {
-        txNumber=0;
-        rssi=0;
-	    RadioEvents.RxDone = OnRxDone;
 
-        Radio.Init( &RadioEvents );
-        Radio.SetChannel( RF_FREQUENCY );
-        Radio.SetTxConfig( MODEM_LORA, TX_OUTPUT_POWER, 0, LORA_BANDWIDTH,
-                                   LORA_SPREADING_FACTOR, LORA_CODINGRATE,
-                                   LORA_PREAMBLE_LENGTH, LORA_FIX_LENGTH_PAYLOAD_ON,
-                                   true, 0, 0, LORA_IQ_INVERSION_ON, 3000 );
-        Serial.println("LoRa Init Success!");
-    }
+    LoRaWAN.send(BUFFER_SIZE, txpacket, 1, requestack);
+    LoRaWAN.send(BUFFER_SIZE, txpacket, 1, requestack);
+
+    // if(LoRaWAN.send(BUFFER_SIZE, txpacket, 1, requestack))
+    // {
+    //     Serial.println("LoRaWAN Init Success!");
+    //     delay(100);
+    //     LoRaWANModeFlag = 1;
+    // }
+
+    // /*LoRa Phy init*/
+    // if(LoRaWANModeFlag == 0)
+    // {
+    //     txNumber=0;
+    //     rssi=0;
+	  //     RadioEvents.RxDone = OnRxDone;
+
+    //     Radio.Init( &RadioEvents );
+    //     Radio.SetChannel( RF_FREQUENCY );
+    //     Radio.SetTxConfig( MODEM_LORA, TX_OUTPUT_POWER, 0, LORA_BANDWIDTH,
+    //                                LORA_SPREADING_FACTOR, LORA_CODINGRATE,
+    //                                LORA_PREAMBLE_LENGTH, LORA_FIX_LENGTH_PAYLOAD_ON,
+    //                                true, 0, 0, LORA_IQ_INVERSION_ON, 3000 );
+    //     Serial.println("LoRa Init Success!");
+    // }
     
 }
 
 void loop()
 {
-    digitalClockDisplay();
-    delay(10);
-    lowPowerSleep(1000);
-    if(1)
-    {
-      LoRaWAN.send(BUFFER_SIZE, txpacket, 1, requestack);
-        // if (LoRaWAN.send(BUFFER_SIZE, txpacket, 1, requestack))
-        // {
-        //     Serial.println("Gateway Send OK");
-        //     delay(100);
-        // }
-        // else
-        // {
-        //     Serial.println("Gateway Send FAILED");
-        //     delay(100);
-        // }
-    }  
-    else
-    {
-        Radio.Send(txpacket, sizeof(txpacket)/sizeof(uint8_t) );
-        //EndDeviceTime = (uint64_t)(TimerGetCurrentTime( ));
-        //frac = modf((double)(endDeviceTime), &inter);
-        //Serial.print(txpacket);
-       // EndDeviceTime = RtcGetCalendar();
-        Serial.print(txpacket[0]);
-        Serial.print(sizeof(txpacket)/sizeof(uint8_t));
-        Serial.println(" Node Send OK.");
-        delay(100);
-    }
+    delay(100);
+    txNumber=0;
+    rssi=0;
+    RadioEvents.RxDone = OnRxDone;
+
+    Radio.Init( &RadioEvents );
+    Radio.SetChannel( RF_FREQUENCY );
+    Radio.SetTxConfig( MODEM_LORA, TX_OUTPUT_POWER, 0, LORA_BANDWIDTH,
+                                LORA_SPREADING_FACTOR, LORA_CODINGRATE,
+                                LORA_PREAMBLE_LENGTH, LORA_FIX_LENGTH_PAYLOAD_ON,
+                                true, 0, 0, LORA_IQ_INVERSION_ON, 3000 );
+    Serial.println("LoRa Init Success!");
+    Radio.Send(txpacket, sizeof(txpacket)/sizeof(uint8_t) );
+    Radio.Send(txpacket, sizeof(txpacket)/sizeof(uint8_t) );
+
+    LoRaWAN.begin(LORAWAN_CLASS, ACTIVE_REGION);  //init LoRaMacInitialization -> init radioevents
+    LoRaWAN.setAdaptiveDR(true);
+    LoRaWAN.joinABP(nwkSKey, appSKey, devAddr);
+
+    LoRaWAN.send(BUFFER_SIZE, txpacket, 1, requestack);
+    LoRaWAN.send(BUFFER_SIZE, txpacket, 1, requestack);
+
+    // digitalClockDisplay();
+    // delay(10);
+    // lowPowerSleep(1000);
+    // if(1)
+    // {
+    //   LoRaWAN.send(BUFFER_SIZE, txpacket, 1, requestack);
+    //     // if (LoRaWAN.send(BUFFER_SIZE, txpacket, 1, requestack))
+    //     // {
+    //     //     Serial.println("Gateway Send OK");
+    //     //     delay(100);
+    //     // }
+    //     // else
+    //     // {
+    //     //     Serial.println("Gateway Send FAILED");
+    //     //     delay(100);
+    //     // }
+    // }  
+    // else
+    // {
+    //     Radio.Send(txpacket, sizeof(txpacket)/sizeof(uint8_t) );
+    //     //EndDeviceTime = (uint64_t)(TimerGetCurrentTime( ));
+    //     //frac = modf((double)(endDeviceTime), &inter);
+    //     //Serial.print(txpacket);
+    //    // EndDeviceTime = RtcGetCalendar();
+    //     Serial.print(txpacket[0]);
+    //     Serial.print(sizeof(txpacket)/sizeof(uint8_t));
+    //     Serial.println(" Node Send OK.");
+    //     delay(100);
+    // }
 }
 
 static void lowPowerSleep(uint32_t sleeptime)

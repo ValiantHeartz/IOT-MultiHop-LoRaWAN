@@ -1161,7 +1161,7 @@ void RadioIrqProcess( void )
 
         if( ( irqRegs & IRQ_RX_DONE ) == IRQ_RX_DONE )
         {
-        	printf("rx done\r\n");
+        	//printf("rx done\r\n");
             uint8_t size;
             TimerStop( &RxTimeoutTimer );
             SX126xGetPayload( RadioRxPayload, &size , 255 );
