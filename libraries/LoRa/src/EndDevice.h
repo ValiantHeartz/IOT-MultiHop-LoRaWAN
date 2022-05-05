@@ -2,7 +2,9 @@
 #include "LoRaWan_APP.h"
 #include <TimeLib.h>
 
-#define BUFFER_SIZE                                 51
+#define BUFFER_SIZE                                 115 //51,115,222
+#define CONTROL_SIZE                                13
+#define DEVICEMONITORVALUELENGTH                    9
 
 void EndDeviceInit(uint8_t EndDeviceID, uint8_t EndDeviceRank, uint8_t EndDeviceBattery);
 
@@ -63,16 +65,17 @@ extern bool renetworkFlag;
 
 extern uint8_t RadioIrqNum;
 extern uint8_t RadioIrqTemp;
-extern uint8_t rounds;
 
 extern uint8_t confirmedNbTrials; //lorawan 1.0.2-18.4
 extern uint8_t txPacket[BUFFER_SIZE];
 extern uint8_t rxpacket[BUFFER_SIZE];
-extern int16_t rssi, rxSize, snr;
 extern uint8_t ENDDEVICEID;
 extern const uint8_t VALIDDATAPOS;
 extern uint8_t validDataPos;
 extern uint8_t txPacket[BUFFER_SIZE];
+extern uint8_t nwkSKey[16];
+extern uint8_t appSKey[16];
+extern uint32_t devAddr;
 
 void LoraRandomSend(uint8_t networkingBroadcastnum, uint8_t INSTRUCTION, uint8_t destinationID);
 void LoraRandomNormalSend(uint8_t rankIntervalNum, uint8_t INSTRUCTION, uint8_t destinationID);
@@ -80,8 +83,8 @@ void PreparePacket(uint8_t insturction, uint8_t destinationDeviceID);
 void SetLowPowerTimer(uint32_t sleeptime);
 void WakeUpDevice();
 uint8_t UpdateStartTime(uint8_t  *startTime, uint16_t setCycle);
-void ReadMonitorData(uint8_t* txPacket);
-void UpdateMonitorDataPos(bool ifNomalTransmitSuccess);
+void ReadMonitorData(uint8_t readType);
+void UpdateMonitorDataPos();
 void OnTxDone();
 void digitalClockDisplay();
 bool checkUserAt(char *cmd, char *content);
@@ -94,7 +97,10 @@ void SelectFatherEndDevice();
 uint32_t CalcAllDeviceStartTime();
 void MonitorDataInit();
 void IfDeviceReceivedParaInit();
-void OpenRadioDuration(uint16_t duration);
+void OpenRadioDuration(uint32_t duration);
 void RoutingInfoInit();
 void UpdateTime(uint8_t* txPacket);
 void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr);
+void PrimaryParaInit(uint8_t* nwkSKey, uint8_t* appSKey, uint32_t& devAddr, uint8_t& ENDDEVICEID, uint8_t select, uint8_t id);
+void ArrayCopy(uint8_t* array1, uint8_t* array2, uint8_t size);
+void DeleteFrontData();

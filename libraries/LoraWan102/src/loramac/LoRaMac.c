@@ -799,8 +799,10 @@ static void PrepareRxDoneAbort( void )
     TimerStart( &MacStateCheckTimer );
 }
 
+uint8_t loRaWANReceiveFlag = 0;
 void OnRadioRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 {
+    loRaWANReceiveFlag = 1;
 	DIO_PRINTF("Event : Rx Done\r\n");
     printf("\r\nlorawan receive packet with rssi %d , snr %d\r\n", rssi, snr);
 #ifdef CLASS_A_WOTA

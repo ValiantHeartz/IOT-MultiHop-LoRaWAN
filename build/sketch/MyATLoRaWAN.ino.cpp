@@ -26,7 +26,7 @@
 #define INSTRUCTION_UPLOADED_CONFIRM 4
 
 //#define ENDDEVICEID 3
-uint8_t ENDDEVICEID = 6;
+uint8_t ENDDEVICEID = 1;
 uint16_t rankIntervalTime = 5000;
 //static const uint16_t normalTransmitTime = 4000
 /**************************************************************************************************************************/
@@ -37,19 +37,24 @@ uint8_t appEui[] = {0x81, 0x00, 0x00, 0x00, 0xFF, 0xF0, 0x00, 0x01};
 uint8_t appKey[] = {0xD9, 0x0A, 0x1C, 0xD7, 0xE0, 0x88, 0x9A, 0x4C, 0x54, 0xEA, 0x4B, 0x56, 0x40, 0x47, 0x37, 0xBB};
 
 /* ABP para:3B*/ //c1-c2
-uint8_t nwkSKey[] = {0xC2, 0x39, 0xFB, 0x90, 0x25, 0x3A, 0xD0, 0xD3, 0xD9, 0x00, 0x1E, 0x28, 0xFD, 0xF9, 0x47, 0x52};
-uint8_t appSKey[] = {0x61, 0x8B, 0x3F, 0x9E, 0x0E, 0x97, 0x3B, 0x97, 0x93, 0x5E, 0x39, 0x96, 0x9A, 0x0E, 0xF3, 0x20};
-uint32_t devAddr = (uint32_t)0x2800F603;
+// uint8_t nwkSKey[] = {0xC1, 0x39, 0xFB, 0x90, 0x25, 0x3A, 0xD0, 0xD3, 0xD9, 0x00, 0x1E, 0x28, 0xFD, 0xF9, 0x47, 0x52};
+// uint8_t appSKey[] = {0x61, 0x8B, 0x3F, 0x9E, 0x0E, 0x97, 0x3B, 0x97, 0x93, 0x5E, 0x39, 0x96, 0x9A, 0x0E, 0xF3, 0x20};
+// uint32_t devAddr = (uint32_t)0x2800F603;
 
 /* ABP para:3a*/ //37-38
 // uint8_t nwkSKey[] = {0x37, 0x0B, 0xF7, 0x30, 0xB3, 0xE5, 0x70, 0xB7, 0x80, 0xC6, 0x8F, 0x44, 0xAA, 0xF8, 0xB5, 0x00};
 // uint8_t appSKey[] = {0x1A, 0xFE, 0xBB, 0x36, 0xF6, 0x4F, 0xB2, 0xD1, 0x04, 0xEF, 0x77, 0x13, 0x77, 0xB8, 0x5B, 0x5F};
 // uint32_t devAddr = (uint32_t)0x2800F602;
 
-/*abp ttn*/
-// uint8_t nwkSKey[] = {0x8D, 0x47, 0x77, 0x25, 0x91, 0x1B, 0xBE, 0x88, 0x38, 0x81, 0x26, 0x7A, 0x51, 0x15, 0xD3, 0x75};
-// uint8_t appSKey[] = {0x55, 0x78, 0x2A, 0x3B, 0xE9, 0x6D, 0x2C, 0x31, 0x44, 0xDF, 0xB8, 0x36, 0xE9, 0x8D, 0x9A, 0xEC};
-// uint32_t devAddr = (uint32_t)0x260BFFCF;
+/*abp ttn*/// 8D->7D
+uint8_t nwkSKey[16] = {0x7D, 0x47, 0x77, 0x25, 0x91, 0x1B, 0xBE, 0x88, 0x38, 0x81, 0x26, 0x7A, 0x51, 0x15, 0xD3, 0x75};
+uint8_t appSKey[16] = {0x55, 0x78, 0x2A, 0x3B, 0xE9, 0x6D, 0x2C, 0x31, 0x44, 0xDF, 0xB8, 0x36, 0xE9, 0x8D, 0x9A, 0xEC};
+uint32_t devAddr = (uint32_t)0x260BFFCF;
+//84>74
+// uint8_t nwkSKey[] = {0x84, 0xAB, 0xDE, 0xB9, 0xD8, 0xBF, 0xB9, 0x9C, 0x8C, 0x61, 0x85, 0xA0, 0x2E, 0xAF, 0x2D, 0x4D};
+// uint8_t appSKey[] = {0x68, 0x29, 0xFB, 0x5B, 0xB5, 0x36, 0xF0, 0xE1, 0x7B, 0x92, 0xC3, 0xA8, 0x10, 0x46, 0x5E, 0x9A};
+// uint32_t devAddr = (uint32_t)0x260B7982;
+
 
 /*LoraWan channelsmask, default channels 0-7*/
 uint16_t userChannelsMask[6] = {0x0003, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000};
@@ -83,7 +88,10 @@ uint8_t appPort = 2;
 uint8_t confirmedNbTrials = 4; //lorawan 1.0.2-18.4
 uint8_t txPacket[BUFFER_SIZE] = {1,2,3};
 uint8_t rxpacket[BUFFER_SIZE];
-int16_t rssi = 0, rxSize = 0, snr = 0;
+uint8_t loRaLWJudgeFlag = 0;
+uint8_t rounds = 0;
+uint8_t nextNetworkingPeriod = 10;
+extern uint8_t loRaWANReceiveFlag;
 
 /**************************************************************************************************************************/
 /*Functions*/
@@ -91,11 +99,11 @@ void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr);
 
 /**************************************************************************************************************************/
 /*Main Function*/
-#line 93 "c:\\Users\\zhoul\\AppData\\Local\\Arduino15\\packages\\CubeCell\\hardware\\CubeCell\\1.3.0\\libraries\\LoRa\\examples\\MyATLoRaWAN\\MyATLoRaWAN.ino"
+#line 101 "c:\\Users\\zhoul\\AppData\\Local\\Arduino15\\packages\\CubeCell\\hardware\\CubeCell\\1.3.0\\libraries\\LoRa\\examples\\MyATLoRaWAN\\MyATLoRaWAN.ino"
 void setup();
-#line 133 "c:\\Users\\zhoul\\AppData\\Local\\Arduino15\\packages\\CubeCell\\hardware\\CubeCell\\1.3.0\\libraries\\LoRa\\examples\\MyATLoRaWAN\\MyATLoRaWAN.ino"
+#line 118 "c:\\Users\\zhoul\\AppData\\Local\\Arduino15\\packages\\CubeCell\\hardware\\CubeCell\\1.3.0\\libraries\\LoRa\\examples\\MyATLoRaWAN\\MyATLoRaWAN.ino"
 void loop();
-#line 93 "c:\\Users\\zhoul\\AppData\\Local\\Arduino15\\packages\\CubeCell\\hardware\\CubeCell\\1.3.0\\libraries\\LoRa\\examples\\MyATLoRaWAN\\MyATLoRaWAN.ino"
+#line 101 "c:\\Users\\zhoul\\AppData\\Local\\Arduino15\\packages\\CubeCell\\hardware\\CubeCell\\1.3.0\\libraries\\LoRa\\examples\\MyATLoRaWAN\\MyATLoRaWAN.ino"
 void setup()
 {
   Serial.begin(115200);
@@ -109,39 +117,47 @@ void setup()
   TimerInit( &wakeUp, WakeUpDevice );
   SetLowPowerTimer(CalcAllDeviceStartTime());
   WAMPLInfoInit();
-  LoRaWANPhyInit();
-  Serial.println(ThisDeviceInfo.EndDeviceID);
-  Serial.println();
-  while (lorawanModeTryNum--)
-  {
-    LoRaWAN.sendrequestconfirm(BUFFER_SIZE, txPacket, 1, 1);
-    Serial.println("lorawan send");
-    delay(1000);
-  }
-  if (RadioIrqNum == 2)
-  {
-    LoRaWANModeFlag = 1;
-    Serial.println("LoRaWAN Init Success!");
-    ThisDeviceInfo.EndDeviceRank = 1;
-  }
-  
-  /*LoRa Phy Init*/
-  else
-  {
-    LoRaWANModeFlag = 0;
-    LoRaPhyInit();
-    Serial.println("LoRa Init Success!");
-  }
-  UpdateStartTime(startTime, setCycle);
-  SetLowPowerTimer(CalcAllDeviceStartTime());
+  for(uint8_t i = 0; i < BUFFER_SIZE; ++i) rxpacket[i] = 255;
+  for(uint8_t i = 0; i < BUFFER_SIZE; ++i) txPacket[i] = 255;
 }
 
 void loop()
 {
-  delay(10);
-  Serial.println("now all start");
-  digitalClockDisplay();
+  Serial.printf("Start running... This device ID is %d", ThisDeviceInfo.EndDeviceID);
+  Serial.println();
+  /*LW or lora judge*/
+  if(!loRaLWJudgeFlag){
+    digitalClockDisplay();
+    LoRaWANPhyInit();
+    uint8_t temp = lorawanModeTryNum;
+    while (temp--)
+    {
+      LoRaWAN.sendrequestconfirm(BUFFER_SIZE, txPacket, 1, 1);
+      delay(1000);
+    }
+    if (loRaWANReceiveFlag)
+    {
+      LoRaWANModeFlag = 1;
+      Serial.println("LoRaWAN Init Success!");
+      ThisDeviceInfo.EndDeviceRank = 1;
+      loRaWANReceiveFlag = 0;
+    }
+    /*LoRa Phy Init*/
+    else
+    {
+      LoRaWANModeFlag = 0;
+      LoRaPhyInit();
+      Serial.println("LoRa Init Success!");
+    }
+    loRaLWJudgeFlag = 1;
+    UpdateStartTime(startTime, setCycle);
+    SetLowPowerTimer(CalcAllDeviceStartTime());
+  }
+  
+  /*networking*/
   if(!networkedFlag){
+    digitalClockDisplay();
+    Serial.printf("Networking... This device ID is %d", ThisDeviceInfo.EndDeviceID);
     if(LoRaWANModeFlag){
       Serial.println("Lorawan mode, sending networking signal.");
       LoRaPhyInit();
@@ -154,62 +170,81 @@ void loop()
       OpenRadioDuration(1000*networkingBroadcastnum);
       SelectFatherEndDevice();
       if(networkedFlag){
-        LoraRandomSend(networkingBroadcastnum, INSTRUCTION_NETWORKED_CONFIRM, ThisDeviceRoutingInfo.FatherEndDeviceID);
+        LoraRandomSend(respondAckNum, INSTRUCTION_NETWORKED_CONFIRM, ThisDeviceRoutingInfo.FatherEndDeviceID);
+        LoraRandomSend(networkingBroadcastnum, INSTRUCTION_NETWORKING, 0);
         OpenRadioDuration(1000*respondAckNum);
       }  
     }
+    if(rounds == nextNetworkingPeriod - 3){ //最多6级节点
+      UpdateStartTime(startTime, setCycle*(nextNetworkingPeriod - 2));
+      loRaLWJudgeFlag = 0;
+      uint32_t thisDeviceRankTillStartReceiveTime = CalcAllDeviceStartTime();
+      SetLowPowerTimer(thisDeviceRankTillStartReceiveTime);
+    } 
   }
-  if(networkedFlag){
-    Serial.printf("Networked, Father device id is: %d. Son device id is: %d. Device rank is: %d", ThisDeviceRoutingInfo.FatherEndDeviceID, \
-    ThisDeviceRoutingInfo.SonEndDeviceID[ThisDeviceRoutingInfo.SonEndDeviceNum - 1], ThisDeviceInfo.EndDeviceRank);
-    Serial.println();
 
+  /*Nomally transmit*/
+  
+  if(networkedFlag){
+    //sleep
     UpdateStartTime(startTime, setCycle);
-    rounds++;
-    Serial.printf("sleep:%d",CalcAllDeviceStartTime());
-    uint16_t thisDeviceRankTillStartReceiveTime = CalcAllDeviceStartTime() - ThisDeviceInfo.EndDeviceRank * rankIntervalTime;
+    uint32_t thisDeviceRankTillStartReceiveTime = CalcAllDeviceStartTime() - ThisDeviceInfo.EndDeviceRank * rankIntervalTime;
     SetLowPowerTimer(thisDeviceRankTillStartReceiveTime);
-    //SetLowPowerTimer(1000);  //for test
+    digitalClockDisplay();
+
+    Serial.printf("Nomally transmitting... This device ID is %d. ", ThisDeviceInfo.EndDeviceID);
+    Serial.println();
+    Serial.printf("Father device id is: %d. Son device num is: %d. Device rank is: %d. Rounds is %d. ", ThisDeviceRoutingInfo.FatherEndDeviceID, \
+    ThisDeviceRoutingInfo.SonEndDeviceNum, ThisDeviceInfo.EndDeviceRank, rounds);
+    for(uint8_t i = 0; i < ThisDeviceRoutingInfo.SonEndDeviceNum; ++i){
+      Serial.printf("Son device %d is %d. ", i+1, ThisDeviceRoutingInfo.SonEndDeviceID[i]);
+    }
+    
     if(LoRaWANModeFlag)
     {
       LoRaPhyInit();
       OpenRadioDuration(rankIntervalTime);
       LoRaWANPhyInit();
-      RadioIrqParaInit();
+      //RadioIrqParaInit();
       Serial.println("lorawan sending");
-      for(uint8_t i = 0; i < 51; i++) Serial.printf("%d ", txPacket[i]);
-      Serial.println();
-      ifNomalTransmitSuccess = 0;
-      ReadMonitorData(txPacket);
+      ReadMonitorData(0);
       PreparePacket(INSTRUCTION_UPLOADING, 0);
-      for(uint8_t i = 0; i < 51; i++) Serial.printf("%d ", txPacket[i]);
+      for(uint8_t i = 0; i < BUFFER_SIZE; i++) Serial.printf("%d ", txPacket[i]);
       Serial.println();
       LoRaWAN.sendrequestconfirm(BUFFER_SIZE, txPacket, 1, 1);  //此处可优化，根据是否收到网关回复决定是否重发
       LoRaWAN.sendrequestconfirm(BUFFER_SIZE, txPacket, 1, 1);
-      if (RadioIrqNum == 2) ifNomalTransmitSuccess = 1;
-      UpdateMonitorDataPos(ifNomalTransmitSuccess);
+      if(loRaWANReceiveFlag) ifNomalTransmitSuccess = 1;
+      UpdateMonitorDataPos();
     }
     else{
+      LoRaPhyInit();
       if(ThisDeviceRoutingInfo.SonEndDeviceNum == 0){
-        SetLowPowerTimer(rankIntervalTime);
+        SetLowPowerTimer((uint32_t)rankIntervalTime);
       }
       else{
-        OpenRadioDuration(rankIntervalTime);
+        OpenRadioDuration((uint32_t)rankIntervalTime);
       }
-      ifNomalTransmitSuccess = 0;
-      ReadMonitorData(txPacket);
-      //PreparePacket(INSTRUCTION_UPLOADING, ThisDeviceRoutingInfo.FatherEndDeviceID);
+      ReadMonitorData(0);
+      PreparePacket(INSTRUCTION_UPLOADING, ThisDeviceRoutingInfo.FatherEndDeviceID);
       Serial.println("lora sending");
-      for(uint8_t i = 0; i < 51; i++) Serial.printf("%d ", txPacket[i]);
+      for(uint8_t i = 0; i < BUFFER_SIZE; i++) Serial.printf("%d ", txPacket[i]);
       Serial.println();
       LoraRandomNormalSend(rankIntervalTime/1000, INSTRUCTION_UPLOADING, ThisDeviceRoutingInfo.FatherEndDeviceID);  //所有下级节点发送5秒
-      UpdateMonitorDataPos(ifNomalTransmitSuccess); 
+      UpdateMonitorDataPos(); 
     }
   }
 
-  if(rounds == 100){
+  rounds++;
+
+  if(rounds == (nextNetworkingPeriod - 2)){
     networkedFlag = 0;
+    loRaLWJudgeFlag = 0;
     RoutingInfoInit();
+    rounds = 0;
+    UpdateStartTime(startTime, setCycle);
+    Serial.print("Wait for next cycle... Time left: ");
+    Serial.println(CalcAllDeviceStartTime()/1000);
+    SetLowPowerTimer(CalcAllDeviceStartTime());
   }
 }
 
@@ -220,38 +255,41 @@ void loop()
   macHdr.Value = payload[pktHeaderLen++];
   switch (macHdr.Bits.MType)
   {
-  case FRAME_TYPE_DATA_UNCONFIRMED_DOWN:
-  {
-    Serial.printf("receive downlink success!");
+    case FRAME_TYPE_DATA_UNCONFIRMED_DOWN:
+    {
+      Serial.printf("receive downlink success!");
+    }
   }
+  uint8_t rxsnr = snr;
+  int16_t rxrssi = rssi;
+  uint16_t rxsize = size;
+  for(uint8_t i = 0; i < rxsize; ++i){
+    rxpacket[i] = payload[i];
   }
-
-  rssi = rssi;
-  rxSize = size;
-  memcpy(rxpacket, payload, size);
-  rxpacket[size] = '\0';
-  turnOnRGB(COLOR_RECEIVED, 0);
   Radio.Sleep();
   uint8_t rxInstruction = rxpacket[0];
   uint8_t sourceDeviceID = rxpacket[7];
   uint8_t destinationDevice = rxpacket[12];
-  for(uint8_t i = 0; i < size; i++){
+  if(rxInstruction == INSTRUCTION_UPLOADED_CONFIRM && destinationDevice  == ThisDeviceInfo.EndDeviceID){
+    UpdateTime(rxpacket);
+  }
+  Serial.println("Signal received!");
+  for(uint8_t i = 0; i < rxsize; i++){
       Serial.printf("%d,", rxpacket[i]);
-    }
-  
+  }
+  Serial.println();
   if(rxInstruction == INSTRUCTION_NETWORKING){
-    Serial.println("INSTRUCTION_NETWORKING signal receive success!");
     if(!networkedFlag && !ThisDeviceRoutingInfo.IfDeviceReceived[sourceDeviceID]){
+      Serial.println("INSTRUCTION_NETWORKING signal receive success!");
       ThisDeviceRoutingInfo.NeiborFatherEndDeviceInfo[ThisDeviceRoutingInfo.NeiborFatherEndDeviceNum].FatherEndDeviceID = rxpacket[7];
       ThisDeviceRoutingInfo.NeiborFatherEndDeviceInfo[ThisDeviceRoutingInfo.NeiborFatherEndDeviceNum].FatherEndDeviceRank = rxpacket[8];
       ThisDeviceRoutingInfo.NeiborFatherEndDeviceInfo[ThisDeviceRoutingInfo.NeiborFatherEndDeviceNum].FatherEndDevicePriority = rxpacket[9];
       ThisDeviceRoutingInfo.NeiborFatherEndDeviceInfo[ThisDeviceRoutingInfo.NeiborFatherEndDeviceNum].FatherEndDeviceBattery = rxpacket[10];
-      ThisDeviceRoutingInfo.NeiborFatherEndDeviceInfo[ThisDeviceRoutingInfo.NeiborFatherEndDeviceNum].FatherEndDeviceRSSI = rssi;
-      ThisDeviceRoutingInfo.NeiborFatherEndDeviceInfo[ThisDeviceRoutingInfo.NeiborFatherEndDeviceNum].FatherEndDeviceSNR = snr;
+      ThisDeviceRoutingInfo.NeiborFatherEndDeviceInfo[ThisDeviceRoutingInfo.NeiborFatherEndDeviceNum].FatherEndDeviceRSSI = rxrssi;
+      ThisDeviceRoutingInfo.NeiborFatherEndDeviceInfo[ThisDeviceRoutingInfo.NeiborFatherEndDeviceNum].FatherEndDeviceSNR = rxsnr;
       ThisDeviceRoutingInfo.NeiborFatherEndDeviceNum++;
       ThisDeviceRoutingInfo.IfDeviceReceived[sourceDeviceID] = 1;
     }
-    UpdateTime(rxpacket);
   }
   if(rxInstruction == INSTRUCTION_NETWORKED_CONFIRM && destinationDevice == ThisDeviceInfo.EndDeviceID && !ThisDeviceRoutingInfo.IfDeviceReceived[sourceDeviceID]){
     ThisDeviceRoutingInfo.SonEndDeviceID[ThisDeviceRoutingInfo.SonEndDeviceNum] = rxpacket[7];
@@ -260,27 +298,17 @@ void loop()
   }
   if(rxInstruction == INSTRUCTION_UPLOADING && destinationDevice == ThisDeviceInfo.EndDeviceID && !ThisDeviceRoutingInfo.IfDeviceReceived[sourceDeviceID]){
     ThisDeviceRoutingInfo.IfDeviceReceived[sourceDeviceID] = 1;
-    //while(txPacket[txStartPos]!=255) txStartPos++;
-    uint8_t rxStartPos = VALIDDATAPOS;
-    while(rxpacket[rxStartPos] != 255){
-      txPacket[validDataPos] = rxpacket[rxStartPos];
-      validDataPos++; rxStartPos++;
-      if(validDataPos == BUFFER_SIZE) break;
+    ReadMonitorData(1);
+    delay(10);
+    for(uint8_t i = 0; i < 2; ++i){
+      PreparePacket(INSTRUCTION_UPLOADED_CONFIRM, sourceDeviceID);
+      Radio.Send( (uint8_t *)txPacket, BUFFER_SIZE );
+      delay(200);
     }
-    PreparePacket(INSTRUCTION_UPLOADED_CONFIRM, sourceDeviceID);
-    Radio.Send( (uint8_t *)txPacket, BUFFER_SIZE );
-    delay(100);
-    Radio.Send( (uint8_t *)txPacket, BUFFER_SIZE );
-    delay(100);
-    ThisDeviceRoutingInfo.FatherEndDeviceID = 0;  
   }
   if(rxInstruction == INSTRUCTION_UPLOADED_CONFIRM && destinationDevice == ThisDeviceInfo.EndDeviceID){
     ifNomalTransmitSuccess = 1;
-    UpdateTime(txPacket);
   }
-  //Serial.printf("\r\nreceive packet \"%s\" with rssi %d , length %d\r\n", rxpacket, rssi, rxSize);
-  Serial.printf("LoRa message received, instruction: %d, source ID: %d", rxInstruction, sourceDeviceID);
-  Serial.println();
 }
 
 

@@ -12,6 +12,7 @@
 #include "Arduino.h"
 #include <TimeLib.h>
 #include "HT_SH1107Wire.h"
+#include "C:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0\libraries\LoRa\src\EndDevice.h"
 
 /*
  * set LoraWan_RGB to 1,the RGB active in loraWan
@@ -22,7 +23,7 @@
 #define LoraWan_RGB 0
 #endif
 
-#define RF_FREQUENCY                                915000000 // Hz
+#define RF_FREQUENCY                                470000000 // Hz
 
 #define TX_OUTPUT_POWER                             10        // dBm
 
@@ -42,20 +43,23 @@
 
 
 #define RX_TIMEOUT_VALUE                            1000
-#define BUFFER_SIZE                                 51 // Define the payload size here
+//#define BUFFER_SIZE                                 51 // Define the payload size here
 
-char txpacket[BUFFER_SIZE];
+uint8_t txpacket[BUFFER_SIZE];
 uint8_t rxpacket[BUFFER_SIZE];
 
 static RadioEvents_t RadioEvents;
 
 int16_t txNumber;
 
-int16_t rssi,rxSize;
+int16_t rssi;
+uint16_t rxSize;
 extern SH1107Wire  display;
 
 void setup() {
     Serial.begin(115200);
+
+    //enableAt();
 
     txNumber=0;
     rssi=0;
@@ -75,38 +79,68 @@ void setup() {
 
 void OLEDDispaly(char* s);
 
+uint16_t radionum = 1;
 void loop()
 {
+    
     Radio.Rx( 0 );
+    Radio.IrqProcess( );
     delay(50);
+    
 }
 
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 {
     rssi=rssi;
     rxSize=size;
-    memcpy(rxpacket, payload, size );
-    rxpacket[size]='\0';
-    //turnOnRGB(COLOR_RECEIVED,0);
-    Radio.Sleep( );
-    Serial.print("send time:");
-    //Serial.printf("\r\nreceived packet \"%s\" with rssi %d , length %d\r\n",rxpacket,rssi,rxSize);
-    for(uint8_t i = 0; i < size; i++){
-      Serial.printf("%d,", rxpacket[i]);
+    for(uint8_t i = 0; i < rxSize; ++i){
+        rxpacket[i] = payload[i];
     }
-    Serial.print("receive time:");
-    Serial.printf("%d,%d", minute(), second());
+    for(uint8_t i = 0; i < rxSize; ++i){
+        Serial.print(rxpacket[i]);Serial.print(',');
+    }
     Serial.println();
-    char s[40];
-    char temp[10];
-    strcat(s, "ID: ");
-    itoa(payload[7], temp, 10);
-    strcat(s, temp);
-    char temp2[10] = " RSSI: ";
-    strcat(s, temp2);
-    itoa(rssi, temp, 10);
-    strcat(s, temp);
-    OLEDDispaly(s);
+    // memcpy(rxpacket, payload, size );
+    // rxpacket[size]='\0';
+    // Serial.printf("%s\n",rxpacket);
+    // turnOnRGB(COLOR_RECEIVED,0);
+    // Radio.Sleep( );
+    // Serial.println();
+    // Serial.println(radionum++);
+    // Serial.printf("Instruction: %d", rxpacket[0]);
+    // Serial.println();
+    // Serial.printf("Father ID: %d", rxpacket[11]);
+    // Serial.println();
+    // Serial.printf("Destination ID: %d", rxpacket[12]);
+    // Serial.println();
+    // Serial.printf("Source ID: %d", rxpacket[7]);
+    // Serial.println();
+    // Serial.printf("Battery level(%): %d", rxpacket[10]*100/70);
+    // Serial.println();
+    // Serial.print("Send time: ");
+    // for(uint8_t i = 1; i < 7; i++){
+    //   Serial.printf("%d ", rxpacket[i]);
+    // }
+    // Serial.println();
+    // Serial.printf("Data buffer: ");
+    // uint8_t t = 13;
+    // while(rxpacket[t]!=255 && t <rxSize){
+    //     Serial.printf("%d ", rxpacket[t]);
+    //     t++;
+    // }
+    // Serial.println();
+    // Serial.printf("Packet size is %d. ", rxSize);Serial.println();
+    // delay(1000);
+    // char s[30];
+    // char temp[10];
+    // strcat(s, "ID: ");
+    // itoa(payload[7], temp, 10);
+    // strcat(s, temp);
+    // char temp2[10] = " RSSI: ";
+    // strcat(s, temp2);
+    // itoa(rssi, temp, 10);
+    // strcat(s, temp);
+    // OLEDDispaly(s);
 }
 
 
@@ -116,11 +150,29 @@ void OLEDDispaly(char* s){
     display.setFont(ArialMT_Plain_10);
     display.setTextAlignment(TEXT_ALIGN_CENTER);
     display.clear();
-    display.drawString(58, 22, s);
+    display.drawString(91, 22, s);
     display.display();
-    delay(1000);
+    delay(100);
     // display.clear();
     // display.drawString(58, 22, "No Signal...");
     // display.display();
 }
 
+// void loop()
+// {
+// 	Radio.Rx( 0 );
+//   delay(500);
+//   Radio.IrqProcess( );
+// }
+
+// void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
+// {
+//     rssi=rssi;
+//     rxSize=size;
+//     memcpy(rxpacket, payload, size );
+//     rxpacket[size]='\0';
+//     //turnOnRGB(COLOR_RECEIVED,0);
+//     Radio.Sleep( );
+//     Serial.printf("\r\nreceived packet \"%s\" with rssi %d , length %d\r\n",rxpacket,rssi,rxSize);
+
+// }

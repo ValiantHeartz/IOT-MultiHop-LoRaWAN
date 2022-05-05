@@ -21,9 +21,9 @@
 #define LoraWan_RGB 0
 #endif
 
-#define RF_FREQUENCY                                471900000 // Hz 471900000
+#define RF_FREQUENCY                                470000000 // Hz 471900000
 
-#define TX_OUTPUT_POWER                             20       // dBm 10,14,17,20
+#define TX_OUTPUT_POWER                             10       // dBm 10,14,17,20
 
 #define LORA_BANDWIDTH                              0         // [0: 125 kHz,
                                                               //  1: 250 kHz,
@@ -41,18 +41,19 @@
 
 
 #define RX_TIMEOUT_VALUE                            1000
-#define BUFFER_SIZE                                 30 // Define the payload size here
+#define BUFFER_SIZE                                 51 // Define the payload size here
 
 uint8_t txpacket[BUFFER_SIZE];
 uint8_t rxpacket[BUFFER_SIZE];
 
 static RadioEvents_t RadioEvents;
 void RadioIrqParaInit();
+void LoRaSent(uint8_t* txdata);
 
 double txNumber;
 
 int16_t rssi,rxSize;
-void  DoubleToString( char *str, double double_num,unsigned int len);
+// void  DoubleToString( char *str, double double_num,unsigned int len);
 
 void setup() {
     Serial.begin(115200);
@@ -73,12 +74,16 @@ uint8_t num = 0;
 void loop()
 {
 
-  txpacket[0] = minute();
-  txpacket[1] = second();
-  txpacket[7] = num++;
-  Serial.printf("%d,%d", minute(), second());
-  turnOnRGB(COLOR_SEND,10);
-	Radio.Send( (uint8_t *)txpacket, sizeof(txpacket)/sizeof(uint8_t) ); //send the package out
+  txpacket[0] = second();
+  txpacket[1] = minute();
+  txpacket[2] = num++;
+  for(uint8_t i = 3; i < BUFFER_SIZE; i++) txpacket[i] = i;
+  Serial.print(second());
+  Serial.println();
+  Serial.print(txpacket[2]);
+  //turnOnRGB(COLOR_SEND,10);
+	Radio.Send( (uint8_t *)txpacket, BUFFER_SIZE ); //send the package out
+  //LoRaSent(txpacket);
   delay(100);
   	
 }
@@ -90,13 +95,13 @@ void loop()
   * @param  len: Fractional length to keep
   * @retval None
   */
-void  DoubleToString( char *str, double double_num,unsigned int len) { 
-  double fractpart, intpart;
-  fractpart = modf(double_num, &intpart);
-  fractpart = fractpart * (pow(10,len));
-  sprintf(str + strlen(str),"%d", (int)(intpart)); //Integer part
-  sprintf(str + strlen(str), ".%d", (int)(fractpart)); //Decimal part
-}
+// void  DoubleToString( char *str, double double_num,unsigned int len) { 
+//   double fractpart, intpart;
+//   fractpart = modf(double_num, &intpart);
+//   fractpart = fractpart * (pow(10,len));
+//   sprintf(str + strlen(str),"%d", (int)(intpart)); //Integer part
+//   sprintf(str + strlen(str), ".%d", (int)(fractpart)); //Decimal part
+// }
 
 // 	delay(10);
 // 	txNumber += 0.01;
@@ -122,7 +127,7 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
     rxSize=size;
     memcpy(rxpacket, payload, size );
     rxpacket[size]='\0';
-    turnOnRGB(COLOR_RECEIVED,0);
+    //turnOnRGB(COLOR_RECEIVED,0);
     Radio.Sleep( );
     // Serial.print("send time:");
     // //Serial.printf("\r\nreceived packet \"%s\" with rssi %d , length %d\r\n",rxpacket,rssi,rxSize);
@@ -133,3 +138,45 @@ void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
     Serial.printf("%d,%d", minute(), second());
     Serial.println();
 }
+
+void LoRaSent(uint8_t* txdata){
+  char txstr[BUFFER_SIZE*2];
+  //uint8_t a = second();
+  sprintf(txstr,"%d",txdata[0]);
+  for(uint8_t i = 1; i < BUFFER_SIZE; ++i){
+    sprintf(txstr + strlen(txstr),"%d", txdata[i]);
+  }
+  Radio.Send( (uint8_t *)txstr, strlen(txstr) );
+  delay(10);
+}
+
+// void loop()
+// {
+// 	delay(1000);
+// 	txNumber += 0.01;
+// 	sprintf(txpacket,"%s","Hello world number");  //start a package
+// //	sprintf(txpacket+strlen(txpacket),"%d",txNumber); //add to the end of package
+	
+// 	DoubleToString(txpacket,txNumber,3);	   //add to the end of package
+	
+// 	turnOnRGB(COLOR_SEND,0); //change rgb color
+
+// 	Serial.printf("\r\nsending packet \"%s\" , length %d\r\n",txpacket, strlen(txpacket));
+
+// 	Radio.Send( (uint8_t *)txpacket, strlen(txpacket) ); //send the package out	
+// }
+
+// /**
+//   * @brief  Double To String
+//   * @param  str: Array or pointer for storing strings
+//   * @param  double_num: Number to be converted
+//   * @param  len: Fractional length to keep
+//   * @retval None
+//   */
+// void  DoubleToString( char *str, double double_num,unsigned int len) { 
+//   double fractpart, intpart;
+//   fractpart = modf(double_num, &intpart);
+//   fractpart = fractpart * (pow(10,len));
+//   sprintf(str + strlen(str),"%d", (int)(intpart)); //Integer part
+//   sprintf(str + strlen(str), ".%d", (int)(fractpart)); //Decimal part
+// }
