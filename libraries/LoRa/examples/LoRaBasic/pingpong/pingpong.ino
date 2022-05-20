@@ -48,7 +48,7 @@
 
 
 #define RX_TIMEOUT_VALUE                            1000
-#define BUFFER_SIZE                                 30 // Define the payload size here
+#define BUFFER_SIZE                                 115 // Define the payload size here
 
 char txpacket[BUFFER_SIZE];
 char rxpacket[BUFFER_SIZE];
@@ -96,7 +96,8 @@ void setup() {
 }
 
 
-
+uint32_t time1 = 0;
+uint32_t time2 = 0;
 void loop()
 {
 	switch(state)
@@ -111,8 +112,11 @@ void loop()
 		    turnOnRGB(COLOR_SEND,0);
 
 		    Serial.printf("\r\nsending packet \"%s\" , length %d\r\n",txpacket, strlen(txpacket));
-
+            time1 = RtcGetTimerValue();
 		    Radio.Send( (uint8_t *)txpacket, strlen(txpacket) );
+            time2 = RtcGetTimerValue();
+            Serial.printf("spend time:%d", time2 - time1);
+            Serial.println();
 		    state=LOWPOWER;
 		    break;
 		case RX:

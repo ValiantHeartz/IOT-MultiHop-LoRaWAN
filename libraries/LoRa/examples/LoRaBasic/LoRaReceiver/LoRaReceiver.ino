@@ -25,7 +25,7 @@
 
 #define RF_FREQUENCY                                470000000 // Hz
 
-#define TX_OUTPUT_POWER                             10        // dBm
+#define TX_OUTPUT_POWER                             20        // dBm
 
 #define LORA_BANDWIDTH                              0         // [0: 125 kHz,
                                                               //  1: 250 kHz,
@@ -45,7 +45,7 @@
 #define RX_TIMEOUT_VALUE                            1000
 //#define BUFFER_SIZE                                 51 // Define the payload size here
 
-uint8_t txpacket[BUFFER_SIZE];
+uint8_t txPacket[BUFFER_SIZE];
 uint8_t rxpacket[BUFFER_SIZE];
 
 static RadioEvents_t RadioEvents;
@@ -78,58 +78,53 @@ void setup() {
 
 
 void OLEDDispaly(char* s);
-
+bool rxtx =1;
+bool rxflag = 0;
 uint16_t radionum = 1;
+uint32_t time1 = 0;
 void loop()
 {
     
-    Radio.Rx( 0 );
-    Radio.IrqProcess( );
-    delay(50);
+    Radio.Rx(0);
+    while(1){
+        //Radio.IrqProcess();
+    }
     
 }
 
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 {
-    rssi=rssi;
     rxSize=size;
     for(uint8_t i = 0; i < rxSize; ++i){
+        //Serial.print(payload[i]);Serial.print(',');
         rxpacket[i] = payload[i];
     }
-    for(uint8_t i = 0; i < rxSize; ++i){
-        Serial.print(rxpacket[i]);Serial.print(',');
+    //Radio.Sleep( );
+    Serial.println();
+    Serial.println(radionum++);
+    Serial.printf("Instruction: %d", rxpacket[0]);
+    Serial.println();
+    Serial.printf("Father ID: %d", rxpacket[11]);
+    Serial.println();
+    Serial.printf("Destination ID: %d", rxpacket[12]);
+    Serial.println();
+    Serial.printf("Source ID: %d", rxpacket[7]);
+    Serial.println();
+    Serial.printf("Battery level(%): %d", rxpacket[10]*100/70);
+    Serial.println();
+    Serial.print("Send time: ");
+    for(uint8_t i = 1; i < 7; i++){
+      Serial.printf("%d ", rxpacket[i]);
     }
     Serial.println();
-    // memcpy(rxpacket, payload, size );
-    // rxpacket[size]='\0';
-    // Serial.printf("%s\n",rxpacket);
-    // turnOnRGB(COLOR_RECEIVED,0);
-    // Radio.Sleep( );
-    // Serial.println();
-    // Serial.println(radionum++);
-    // Serial.printf("Instruction: %d", rxpacket[0]);
-    // Serial.println();
-    // Serial.printf("Father ID: %d", rxpacket[11]);
-    // Serial.println();
-    // Serial.printf("Destination ID: %d", rxpacket[12]);
-    // Serial.println();
-    // Serial.printf("Source ID: %d", rxpacket[7]);
-    // Serial.println();
-    // Serial.printf("Battery level(%): %d", rxpacket[10]*100/70);
-    // Serial.println();
-    // Serial.print("Send time: ");
-    // for(uint8_t i = 1; i < 7; i++){
-    //   Serial.printf("%d ", rxpacket[i]);
-    // }
-    // Serial.println();
-    // Serial.printf("Data buffer: ");
-    // uint8_t t = 13;
-    // while(rxpacket[t]!=255 && t <rxSize){
-    //     Serial.printf("%d ", rxpacket[t]);
-    //     t++;
-    // }
-    // Serial.println();
-    // Serial.printf("Packet size is %d. ", rxSize);Serial.println();
+    Serial.printf("Data buffer: ");
+    uint8_t t = 13;
+    while(rxpacket[t]!=255 && t <rxSize){
+        Serial.printf("%d ", rxpacket[t]);
+        t++;
+    }
+    Serial.println();
+    Serial.printf("Packet size is %d. ", rxSize);Serial.println();
     // delay(1000);
     // char s[30];
     // char temp[10];

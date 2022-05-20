@@ -898,6 +898,8 @@ void RadioSend( uint8_t *buffer, uint8_t size )
     SX126xSetPacketParams( &SX126x.PacketParams );
 
     SX126xSendPayload( buffer, size, 0 );
+    // printf("timeout: %d",TxTimeout);
+    
     TimerSetValue( &TxTimeoutTimer, TxTimeout );
     TimerStart( &TxTimeoutTimer );
 }

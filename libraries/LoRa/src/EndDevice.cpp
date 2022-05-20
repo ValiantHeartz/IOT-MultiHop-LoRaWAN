@@ -5,8 +5,8 @@
 
 /**************************************************************************************************************************/
 /*LoRa Mode Para*/
-#define RF_FREQUENCY 470000000  // Hz
-#define TX_OUTPUT_POWER 10      // dBm 22+-1dbm
+#define RF_FREQUENCY 470000000  // Hz 915000000
+#define TX_OUTPUT_POWER 22      // dBm 22+-1dbm min:10（lora -6~22)
 #define LORA_BANDWIDTH 0        // [0: 125 kHz,1: 250 kHz,2: 500 kHz,3: Reserved]
 #define LORA_SPREADING_FACTOR 7 // [SF7..SF12] 10kb/s-0.5kb/s
 #define LORA_CODINGRATE 1       // [1: 4/5,2: 4/6,3: 4/7,4: 4/8]
@@ -21,10 +21,11 @@
 #define INSTRUCTION_NETWORKED_CONFIRM 2
 #define INSTRUCTION_UPLOADING 3
 #define INSTRUCTION_UPLOADED_CONFIRM 4
-
+#define INSTRUCTION_ASSIGN_PRIORITY 5
 
 
 /**************************************************************************************************************************/
+uint8_t ENDDEVICEID = 0;
 static const uint8_t monthDays[]={31,28,31,30,31,30,31,31,30,31,30,31};
 const uint8_t VALIDDATAPOS = 13;
 #define LEAP_YEAR(Y)     ( ((Y)>0) && !((Y)%4) && ( ((Y)%100) || !((Y)%400) ) )
@@ -46,9 +47,10 @@ uint16_t batteryVoltage = 0;
 uint8_t startTime[6];
 uint16_t setCycle;
 uint8_t networkedFlag = 0;
-uint8_t networkingBroadcastnum = 5;  //nomally 10
+uint8_t networkingBroadcastnum = 2;  //nomally 10
 uint8_t respondAckNum = 3;
 uint8_t onTxDone = 0;
+uint8_t onRxDone = 0;
 uint8_t ifTimeNotInit1 = 1;
 uint8_t ifTimeNotInit2 = 1;
 uint8_t ifTimeNotInit3 = 1;
@@ -56,6 +58,10 @@ bool ifNomalTransmitSuccess = 0;
 bool renetworkFlag = 0;
 uint8_t monitorData[DEVICEMONITORVALUELENGTH];
 uint8_t frameCheck = 0;
+//uint8_t loRaWANReceiveFlag;
+uint8_t rxsnr = 0;
+int16_t rxrssi = 0;
+uint16_t rxsize = 0;
 
 
 void EndDeviceInit(uint8_t EndDeviceID, uint8_t EndDeviceRank, uint8_t EndDeviceBattery)
@@ -71,15 +77,17 @@ void LoraRandomSend(uint8_t networkingBroadcastnum, uint8_t INSTRUCTION, uint8_t
   IfDeviceReceivedParaInit();
   uint16_t randomTimeSum = 0;
   uint8_t num = networkingBroadcastnum;
+  delay(1000); //弥补校时误差
+  randomTimeSum += 1000;
   while(num){
     PreparePacket(INSTRUCTION, destinationID);
     Radio.Send( (uint8_t *)txPacket, BUFFER_SIZE );
-    uint16_t rt = random(100, 1000);
+    uint16_t rt = random(210, 2000);  //210 为了等待上一次发送完毕
     delay(rt);
     randomTimeSum += rt;
     num--;
   }
-  SetLowPowerTimer((uint32_t)(1000*networkingBroadcastnum - randomTimeSum));
+  SetLowPowerTimer((uint32_t)(5000 - randomTimeSum));
 }
 
 void LoraRandomNormalSend(uint8_t rankIntervalNum, uint8_t INSTRUCTION, uint8_t destinationID){
@@ -174,6 +182,7 @@ void DeleteFrontData(){
   }
 }
 
+//0for read monitor;  1 for read uploading
 void ReadMonitorData(uint8_t readType){
   if(readType == 0){
     DeleteFrontData();
@@ -184,19 +193,23 @@ void ReadMonitorData(uint8_t readType){
     for( uint8_t i = 3; i < DEVICEMONITORVALUELENGTH; ++i){
       data[i] = i;
     }
-    for(uint8_t i = 0; i < DEVICEMONITORVALUELENGTH; ++i){
-      txPacket[validDataPos + i] = 1;
+    for(uint8_t i = 0; i < DEVICEMONITORVALUELENGTH - 2; ++i){
+      txPacket[validDataPos++] = data[i];
     }
-    validDataPos += DEVICEMONITORVALUELENGTH;
+    txPacket[validDataPos++] = 0;
+    txPacket[validDataPos++] = 0;
+    //validDataPos += DEVICEMONITORVALUELENGTH;
   }
 
   else if(readType == 1){
     uint8_t rxStartPos = VALIDDATAPOS;
     while(rxpacket[rxStartPos] != 255){
       DeleteFrontData();
-      for(uint8_t i = 0; i < DEVICEMONITORVALUELENGTH; ++i){
+      for(uint8_t i = 0; i < DEVICEMONITORVALUELENGTH - 2; ++i){ //-2 for snr and rssi
         txPacket[validDataPos++] = rxpacket[rxStartPos++];
       }
+      txPacket[validDataPos++] = rxrssi;
+      txPacket[validDataPos++] = rxsnr;
     }
   } 
 }
@@ -210,12 +223,6 @@ void UpdateMonitorDataPos(){
   // else validDataPos += 2;
   // if(validDataPos == BUFFER_SIZE - 1) validDataPos-=2;
 }
-
-
-void OnTxDone(){
-  onTxDone = 1;
-}
-
 
 void digitalClockDisplay()
 {
@@ -300,6 +307,7 @@ void LoRaPhyInit()
 {
   RadioEvents.RxDone = OnRxDone;
   RadioEvents.TxDone = OnTxDone;
+  //RadioEvents.TxTimeout = OnTxTimeout;
 
   Radio.Init(&RadioEvents);
   Radio.SetChannel(RF_FREQUENCY);
@@ -307,6 +315,10 @@ void LoRaPhyInit()
                     LORA_SPREADING_FACTOR, LORA_CODINGRATE,
                     LORA_PREAMBLE_LENGTH, LORA_FIX_LENGTH_PAYLOAD_ON,
                     true, 0, 0, LORA_IQ_INVERSION_ON, 3000);
+  Radio.SetRxConfig( MODEM_LORA, LORA_BANDWIDTH, LORA_SPREADING_FACTOR,
+                                   LORA_CODINGRATE, 0, LORA_PREAMBLE_LENGTH,
+                                   LORA_SYMBOL_TIMEOUT, LORA_FIX_LENGTH_PAYLOAD_ON,
+                                   0, true, 0, 0, LORA_IQ_INVERSION_ON, true );
 }
 
 void LoRaWANPhyInit(){
@@ -326,9 +338,8 @@ uint8_t ReadBattery(){
 
 void WAMPLInfoInit(){
   EndDeviceInit(ENDDEVICEID, 0, ReadBattery());
-  ThisDeviceRoutingInfo.NeiborFatherEndDeviceNum = 0;
-  ThisDeviceRoutingInfo.SonEndDeviceNum = 0;
   MonitorDataInit();
+  RoutingInfoInit();
 }
 
 
@@ -353,6 +364,7 @@ void SelectFatherEndDevice(){
     } 
   }
   Serial.printf("neibornum:%d, maxweightpos: %d %d", neiborNum, pos, weight[pos]);
+  Serial.println();
   ThisDeviceRoutingInfo.FatherEndDeviceID = ThisDeviceRoutingInfo.NeiborFatherEndDeviceInfo[pos].FatherEndDeviceID;
   ThisDeviceInfo.EndDeviceRank = ThisDeviceRoutingInfo.NeiborFatherEndDeviceInfo[pos].FatherEndDeviceRank + 1;
   networkedFlag = 1;
@@ -370,15 +382,15 @@ uint32_t CalcAllDeviceStartTime(){
 void OpenRadioDuration(uint32_t duration){
   Serial.println("OpenRadioDuration start!");
   IfDeviceReceivedParaInit();
-  for(uint16_t i = 0; i < duration / 100; i++){
-      Radio.Rx( 0 );
-      //Radio.IrqProcess( );
-      delay(100);  //has to be 500
-    }
-  // Radio.Rx( 0 );
-  // delay(duration);
+  // for(uint16_t i = 0; i < duration / 100; i++){
+  //     Radio.Rx( 0 );
+  //     //Radio.IrqProcess( );
+  //     delay(100);  //has to be 500
+  //   }
+  Radio.Rx( 0 );
+  delay(duration);
   Radio.Sleep();
-  Serial.println("OpenRadioDuration finish!");
+  //Serial.println("OpenRadioDuration finish!");
 }
 
 void MonitorDataInit(){
@@ -392,8 +404,10 @@ void IfDeviceReceivedParaInit(){
 void RoutingInfoInit(){
   ThisDeviceRoutingInfo.FatherEndDeviceID = 0;
   IfDeviceReceivedParaInit();
-  ThisDeviceRoutingInfo.NeiborFatherEndDeviceNum = 0;
-  ThisDeviceRoutingInfo.SonEndDeviceNum = 0;
+  ThisDeviceRoutingInfo.NeiborFatherEndDeviceNum = 0;  //NeiborFatherEndDeviceInfo no need to init
+  ThisDeviceRoutingInfo.SonEndDeviceNum = 0; //sonenddeviceinfo no need to init
+  IfSonEndDeviceIDAssignedInit();
+  EndDeviceInit(ENDDEVICEID, 0, ReadBattery());
 }
 
 void UpdateTime(uint8_t* rxpacket){
@@ -412,12 +426,20 @@ void ArrayCopy(uint8_t* array1, uint8_t* array2, uint8_t size){
 void PrimaryParaInit(uint8_t* nwkSKey, uint8_t* appSKey, uint32_t& devAddr, uint8_t& ENDDEVICEID, uint8_t select, uint8_t id){
   ENDDEVICEID = id;
   if(select == 1){
+    // uint8_t nwkSKey_p[] = {0xC1, 0x39, 0xFB, 0x90, 0x25, 0x3A, 0xD0, 0xD3, 0xD9, 0x00, 0x1E, 0x28, 0xFD, 0xF9, 0x47, 0x52};
+    // uint8_t appSKey_p[] = {0x61, 0x8B, 0x3F, 0x9E, 0x0E, 0x97, 0x3B, 0x97, 0x93, 0x5E, 0x39, 0x96, 0x9A, 0x0E, 0xF3, 0x20};
+    // ArrayCopy(nwkSKey, nwkSKey_p,16); ArrayCopy(appSKey, appSKey_p,16);
+    // devAddr = (uint32_t)0x2800F603;
     uint8_t nwkSKey_p[16] = {0x8D, 0x47, 0x77, 0x25, 0x91, 0x1B, 0xBE, 0x88, 0x38, 0x81, 0x26, 0x7A, 0x51, 0x15, 0xD3, 0x75};
     uint8_t appSKey_p[16] = {0x55, 0x78, 0x2A, 0x3B, 0xE9, 0x6D, 0x2C, 0x31, 0x44, 0xDF, 0xB8, 0x36, 0xE9, 0x8D, 0x9A, 0xEC};
     ArrayCopy(nwkSKey, nwkSKey_p,16); ArrayCopy(appSKey, appSKey_p,16);
     devAddr = (uint32_t)0x260BFFCF;
   }
   else if(select == 2){
+    // uint8_t nwkSKey_p[] = {0x37, 0x0B, 0xF7, 0x30, 0xB3, 0xE5, 0x70, 0xB7, 0x80, 0xC6, 0x8F, 0x44, 0xAA, 0xF8, 0xB5, 0x00};
+    // uint8_t appSKey_p[] = {0x1A, 0xFE, 0xBB, 0x36, 0xF6, 0x4F, 0xB2, 0xD1, 0x04, 0xEF, 0x77, 0x13, 0x77, 0xB8, 0x5B, 0x5F};
+    // ArrayCopy(nwkSKey, nwkSKey_p,16); ArrayCopy(appSKey, appSKey_p,16);
+    // devAddr = (uint32_t)0x2800F602;
     uint8_t nwkSKey_p[16] = {0x84, 0xAB, 0xDE, 0xB9, 0xD8, 0xBF, 0xB9, 0x9C, 0x8C, 0x61, 0x85, 0xA0, 0x2E, 0xAF, 0x2D, 0x4D};
     uint8_t appSKey_p[16] = {0x68, 0x29, 0xFB, 0x5B, 0xB5, 0x36, 0xF0, 0xE1, 0x7B, 0x92, 0xC3, 0xA8, 0x10, 0x46, 0x5E, 0x9A};
     ArrayCopy(nwkSKey, nwkSKey_p,16); ArrayCopy(appSKey, appSKey_p,16);
@@ -425,15 +447,101 @@ void PrimaryParaInit(uint8_t* nwkSKey, uint8_t* appSKey, uint32_t& devAddr, uint
   }
 }
 
-void LoRaSend(uint8_t* txdata){
-  char txstr[BUFFER_SIZE];
-  for(uint8_t i = 0; i < BUFFER_SIZE; ++i){
-    sprintf(txstr + strlen(txstr),"%d", txdata[i]);
-  }
-  Radio.Send( (uint8_t *)txstr, BUFFER_SIZE );
-  delay(10);
+// void LoRaSend(uint8_t* txdata){
+//   char txstr[BUFFER_SIZE];
+//   for(uint8_t i = 0; i < BUFFER_SIZE; ++i){
+//     sprintf(txstr + strlen(txstr),"%d", txdata[i]);
+//   }
+//   Radio.Send( (uint8_t *)txstr, BUFFER_SIZE );
+//   delay(10);
+// }
+
+void IfSonEndDeviceIDAssignedInit(){
+  for(uint8_t i = 0; i < 20; ++i) ThisDeviceRoutingInfo.SonEndDeviceIDAssigned[i] = 0;
 }
 
-void LoRaReceive(uint8_t* payload, uint8_t* rxdata){
+void AssignPriority(uint8_t assignTime){
+  Serial.println("AssignPriority start!");
+  for(uint8_t i = 0; i < assignTime; ++i){
+    // uint8_t j = 0;
+    // uint16_t passedTime = 0;
+    digitalClockDisplay();
+    OpenRadioDuration(5000);
+    // while(j < ThisDeviceRoutingInfo.SonEndDeviceNum && ThisDeviceRoutingInfo.SonEndDeviceIDAssigned[ThisDeviceRoutingInfo.SonEndDeviceID[j]] != 1){
+    //   Serial.printf("Now assign sondevice id: %d", ThisDeviceRoutingInfo.SonEndDeviceID[j]);
+    //   ThisDeviceRoutingInfo.SonEndDeviceIDAssigned[ThisDeviceRoutingInfo.SonEndDeviceID[j]] = 1;
+    //   PreparePacket(INSTRUCTION_ASSIGN_PRIORITY, ThisDeviceRoutingInfo.SonEndDeviceID[j]);
+    //   txPacket[9] = ++j;
+    //   Radio.Send( (uint8_t *)txPacket, BUFFER_SIZE );
+    //   delay(210);
+    //   passedTime += 210;
+    //   if(passedTime == 840) break;
+    // }
+    // delay(1000 - passedTime); //sondevice max num : 5
+  }
+}
 
+void ReceivePriority(uint8_t assignTime){
+  Serial.println("ReceivePriority start!");
+  uint8_t i = 0;
+  for(i = 0; i < assignTime; ++i){
+    uint16_t passedTime = 0;
+    uint16_t timetemp = 0;
+    for(uint8_t j = 0; j < 1; ++j){
+      Serial.println("Send INSTRUCTION_NETWORKED_CONFIRM.");
+      digitalClockDisplay();
+      timetemp=random(1,11)*420;
+      passedTime += timetemp;
+      delay(timetemp);
+      PreparePacket(INSTRUCTION_NETWORKED_CONFIRM, ThisDeviceRoutingInfo.FatherEndDeviceID);
+      Radio.Send( (uint8_t *)txPacket, BUFFER_SIZE );
+      delay(210);
+      Radio.Rx(0);
+      delay(420);
+      Radio.Sleep();
+      passedTime += 630;
+      if(ThisDeviceInfo.EndDevicePriority != 0) break;
+    }
+    delay(5000 - passedTime);
+    if(ThisDeviceInfo.EndDevicePriority != 0) break;
+  }
+  Serial.println("ReceivePriority end!");
+  SetLowPowerTimer(5000*(3 - i));
+}
+
+void LoraTDMATransmit(){
+  //wait 100ms, send 200ms, receive 300ms.
+  if(ThisDeviceInfo.EndDevicePriority != 0){
+    delay(500);  //保护时隙
+    uint8_t priority = ThisDeviceInfo.EndDevicePriority - 1;
+    Serial.println("LoraTDMATransmit start!");
+    delay(priority*2000);
+    PreparePacket(INSTRUCTION_UPLOADING, ThisDeviceRoutingInfo.FatherEndDeviceID);
+    Radio.Send( (uint8_t *)txPacket, BUFFER_SIZE );
+    delay(210);
+    OpenRadioDuration(790);
+    delay(500);
+  }
+  else{//随机传输
+    delay(rankIntervalTime - 5000);
+    delay(1000);
+    uint16_t passedTime = 0;
+    uint16_t timetemp = 0;
+    for(uint8_t i = 0; i < 2; ++i){
+      timetemp=random(0,5)*210;
+      passedTime += timetemp;
+      delay(timetemp);
+      PreparePacket(INSTRUCTION_UPLOADING, ThisDeviceRoutingInfo.FatherEndDeviceID);
+      Radio.Send( (uint8_t *)txPacket, BUFFER_SIZE );
+      delay(210);
+      OpenRadioDuration(790);
+    }
+  }
+}
+
+uint8_t FindEndDeviceIDAssignedPriority(uint8_t endDeviceID){
+  for(uint8_t i = 0; i < ThisDeviceRoutingInfo.SonEndDeviceNum; ++i){
+    if(ThisDeviceRoutingInfo.SonEndDeviceID[i] == endDeviceID) return i + 1;
+  }
+  return ThisDeviceRoutingInfo.SonEndDeviceNum + 1;
 }

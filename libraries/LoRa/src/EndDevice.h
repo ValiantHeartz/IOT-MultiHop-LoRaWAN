@@ -32,6 +32,7 @@ typedef struct sEndDeviceRoutingInfo_t{
   FatherEndDevice_t NeiborFatherEndDeviceInfo[10];
   uint8_t SonEndDeviceNum;
   uint8_t SonEndDeviceID[10];
+  uint8_t SonEndDeviceIDAssigned[20];
   uint8_t IfDeviceReceived[20];
 }EndDeviceRoutingInfo_t;
 
@@ -76,6 +77,12 @@ extern uint8_t txPacket[BUFFER_SIZE];
 extern uint8_t nwkSKey[16];
 extern uint8_t appSKey[16];
 extern uint32_t devAddr;
+extern uint8_t loRaWANReceiveFlag;
+extern uint8_t onTxDone;
+extern uint8_t onRxDone;
+extern uint8_t rxsnr;
+extern int16_t rxrssi;
+extern uint16_t rxsize;
 
 void LoraRandomSend(uint8_t networkingBroadcastnum, uint8_t INSTRUCTION, uint8_t destinationID);
 void LoraRandomNormalSend(uint8_t rankIntervalNum, uint8_t INSTRUCTION, uint8_t destinationID);
@@ -104,3 +111,9 @@ void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr);
 void PrimaryParaInit(uint8_t* nwkSKey, uint8_t* appSKey, uint32_t& devAddr, uint8_t& ENDDEVICEID, uint8_t select, uint8_t id);
 void ArrayCopy(uint8_t* array1, uint8_t* array2, uint8_t size);
 void DeleteFrontData();
+void ReceivePriority(uint8_t assignTime);
+void AssignPriority(uint8_t assignTime);
+void IfSonEndDeviceIDAssignedInit();
+void LoraTDMATransmit();
+void OnTxTimeout();
+uint8_t FindEndDeviceIDAssignedPriority(uint8_t endDeviceID);
