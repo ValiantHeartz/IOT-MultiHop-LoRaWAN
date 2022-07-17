@@ -286,6 +286,7 @@ void __attribute__((weak)) downLinkDataHandle(McpsIndication_t *mcpsIndication)
  *               containing indication attributes.
  */
 int revrssi;
+extern uint8_t loRaWANReceiveFlag;
 static void McpsIndication( McpsIndication_t *mcpsIndication )
 {
 	if( mcpsIndication->Status != LORAMAC_EVENT_INFO_STATUS_OK )
@@ -327,6 +328,7 @@ static void McpsIndication( McpsIndication_t *mcpsIndication )
 		default:
 			break;
 	}
+	loRaWANReceiveFlag += 1;
 	printf( "downlink: rssi = %d, snr = %d, datarate = %d\r\n", mcpsIndication->Rssi, (int)mcpsIndication->Snr,(int)mcpsIndication->RxDoneDatarate);	
 	Serial.println("downlink recieved");
 	if(mcpsIndication->AckReceived)

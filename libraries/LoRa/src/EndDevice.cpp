@@ -190,14 +190,14 @@ void ReadMonitorData(uint8_t readType){
     data[0] = ThisDeviceInfo.EndDeviceID;
     data[1] = frameCheck++;
     data[2] = ThisDeviceRoutingInfo.FatherEndDeviceID;
-    for( uint8_t i = 3; i < DEVICEMONITORVALUELENGTH; ++i){
+    data[3] = 0;
+    data[4] = 0;
+    for( uint8_t i = 5; i < DEVICEMONITORVALUELENGTH; ++i){
       data[i] = i;
     }
-    for(uint8_t i = 0; i < DEVICEMONITORVALUELENGTH - 2; ++i){
+    for(uint8_t i = 0; i < DEVICEMONITORVALUELENGTH; ++i){
       txPacket[validDataPos++] = data[i];
     }
-    txPacket[validDataPos++] = 0;
-    txPacket[validDataPos++] = 0;
     //validDataPos += DEVICEMONITORVALUELENGTH;
   }
 
@@ -205,11 +205,19 @@ void ReadMonitorData(uint8_t readType){
     uint8_t rxStartPos = VALIDDATAPOS;
     while(rxpacket[rxStartPos] != 255){
       DeleteFrontData();
-      for(uint8_t i = 0; i < DEVICEMONITORVALUELENGTH - 2; ++i){ //-2 for snr and rssi
+      for(uint8_t i = 0; i < DEVICEMONITORVALUELENGTH; ++i){ //-2 for snr and rssi
+        if(i==3){
+          txPacket[validDataPos++] = rxrssi+150;
+          rxStartPos++;
+          continue;
+        }
+        if(i==4){
+          txPacket[validDataPos++] = rxsnr+150;
+          rxStartPos++;
+          continue;
+        }
         txPacket[validDataPos++] = rxpacket[rxStartPos++];
       }
-      txPacket[validDataPos++] = rxrssi;
-      txPacket[validDataPos++] = rxsnr;
     }
   } 
 }

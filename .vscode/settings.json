@@ -14,7 +14,14 @@
         "*.tcc": "cpp",
         "istream": "cpp",
         "ostream": "cpp",
-        "string": "cpp"
+        "string": "cpp",
+        "soc.h": "c",
+        "asr_arduino.h": "c",
+        "pins_arduino.h": "c",
+        "utilities.h": "c",
+        "timer.h": "c",
+        "sx126x.h": "c",
+        "stdint.h": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

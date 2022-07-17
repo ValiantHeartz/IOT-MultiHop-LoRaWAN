@@ -139,7 +139,7 @@ void loop()
       LoRaWAN.sendrequestconfirm(BUFFER_SIZE, txPacket, 1, 1);
       delay(1000);
     }
-    if (loRaWANReceiveFlag)
+    if (loRaWANReceiveFlag > 1)
     {
       LoRaWANModeFlag = 1;
       Serial.println("LoRaWAN Init Success!");
