@@ -1,4 +1,4 @@
-c:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0\build\core\port\printf.c.o: \
+C:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0\build\core\port\printf.c.o: \
  C:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0\cores\asr650x\port\printf.c \
  C:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0/cores/asr650x/projects/PSoC4/project.h \
  C:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0/cores/asr650x/projects/PSoC4/cyfitter_cfg.h \

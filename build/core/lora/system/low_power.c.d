@@ -1,4 +1,4 @@
-c:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0\build\core\lora\system\low_power.c.o: \
+C:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0\build\core\lora\system\low_power.c.o: \
  C:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0\cores\asr650x\lora\system\low_power.c \
  C:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0/cores/asr650x/board/inc/hw.h \
  C:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0/cores/asr650x/board/inc/debug.h \

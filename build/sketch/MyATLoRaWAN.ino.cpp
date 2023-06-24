@@ -1,4 +1,4 @@
-#line 1 "c:\\Users\\zhoul\\AppData\\Local\\Arduino15\\packages\\CubeCell\\hardware\\CubeCell\\1.3.0\\libraries\\LoRa\\examples\\MyATLoRaWAN\\MyATLoRaWAN.ino"
+#line 1 "C:\\Users\\zhoul\\AppData\\Local\\Arduino15\\packages\\CubeCell\\hardware\\CubeCell\\1.3.0\\libraries\\LoRa\\examples\\MyATLoRaWAN\\MyATLoRaWAN.ino"
 #include "LoRaWan_APP.h"
 //#include "LoRaWanMinimal_APP.h"
 #include "Arduino.h"
@@ -101,13 +101,13 @@ void OnRxDone(uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr);
 
 /**************************************************************************************************************************/
 /*Main Function*/
-#line 103 "c:\\Users\\zhoul\\AppData\\Local\\Arduino15\\packages\\CubeCell\\hardware\\CubeCell\\1.3.0\\libraries\\LoRa\\examples\\MyATLoRaWAN\\MyATLoRaWAN.ino"
+#line 103 "C:\\Users\\zhoul\\AppData\\Local\\Arduino15\\packages\\CubeCell\\hardware\\CubeCell\\1.3.0\\libraries\\LoRa\\examples\\MyATLoRaWAN\\MyATLoRaWAN.ino"
 void setup();
-#line 120 "c:\\Users\\zhoul\\AppData\\Local\\Arduino15\\packages\\CubeCell\\hardware\\CubeCell\\1.3.0\\libraries\\LoRa\\examples\\MyATLoRaWAN\\MyATLoRaWAN.ino"
+#line 121 "C:\\Users\\zhoul\\AppData\\Local\\Arduino15\\packages\\CubeCell\\hardware\\CubeCell\\1.3.0\\libraries\\LoRa\\examples\\MyATLoRaWAN\\MyATLoRaWAN.ino"
 void loop();
-#line 332 "c:\\Users\\zhoul\\AppData\\Local\\Arduino15\\packages\\CubeCell\\hardware\\CubeCell\\1.3.0\\libraries\\LoRa\\examples\\MyATLoRaWAN\\MyATLoRaWAN.ino"
+#line 335 "C:\\Users\\zhoul\\AppData\\Local\\Arduino15\\packages\\CubeCell\\hardware\\CubeCell\\1.3.0\\libraries\\LoRa\\examples\\MyATLoRaWAN\\MyATLoRaWAN.ino"
 void OnTxDone();
-#line 103 "c:\\Users\\zhoul\\AppData\\Local\\Arduino15\\packages\\CubeCell\\hardware\\CubeCell\\1.3.0\\libraries\\LoRa\\examples\\MyATLoRaWAN\\MyATLoRaWAN.ino"
+#line 103 "C:\\Users\\zhoul\\AppData\\Local\\Arduino15\\packages\\CubeCell\\hardware\\CubeCell\\1.3.0\\libraries\\LoRa\\examples\\MyATLoRaWAN\\MyATLoRaWAN.ino"
 void setup()
 {
   Serial.begin(115200);
@@ -115,6 +115,7 @@ void setup()
   enableAt();
 #endif
   /*Wait for Time Init*/
+  Serial.println("Waiting for AT instructions...");
   while(ifTimeNotInit1||ifTimeNotInit2||ifTimeNotInit3) lowPowerHandler();
   Serial.println("Time init success!");
   /*LoRaWAN Mode Init*/
@@ -136,7 +137,9 @@ void loop()
     uint8_t temp = lorawanModeTryNum;
     while (temp--)
     {
-      LoRaWAN.sendrequestconfirm(BUFFER_SIZE, txPacket, 1, 1);
+      uint8_t lStatus = LoRaWAN.sendrequestconfirm(BUFFER_SIZE, txPacket, 1, 1);
+      Serial.printf("LoRaWAN networking... status: %d", lStatus);
+      Serial.println();
       delay(1000);
     }
     if (loRaWANReceiveFlag > 1)

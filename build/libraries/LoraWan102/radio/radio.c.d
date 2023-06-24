@@ -1,4 +1,4 @@
-c:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0\build\libraries\LoraWan102\radio\radio.c.o: \
+C:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0\build\libraries\LoraWan102\radio\radio.c.o: \
  C:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0\libraries\LoraWan102\src\radio\radio.c \
  C:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0/cores/asr650x/lora/system/timer.h \
  C:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0/cores/asr650x/lora/system/timeServer.h \

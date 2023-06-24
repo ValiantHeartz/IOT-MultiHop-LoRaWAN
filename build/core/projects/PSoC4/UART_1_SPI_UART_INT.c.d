@@ -1,4 +1,4 @@
-c:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0\build\core\projects\PSoC4\UART_1_SPI_UART_INT.c.o: \
+C:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0\build\core\projects\PSoC4\UART_1_SPI_UART_INT.c.o: \
  C:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0\cores\asr650x\projects\PSoC4\UART_1_SPI_UART_INT.c \
  C:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0\cores\asr650x\projects\PSoC4\UART_1_PVT.h \
  C:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0\cores\asr650x\projects\PSoC4\UART_1.h \

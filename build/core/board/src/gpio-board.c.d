@@ -1,4 +1,4 @@
-c:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0\build\core\board\src\gpio-board.c.o: \
+C:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0\build\core\board\src\gpio-board.c.o: \
  C:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0\cores\asr650x\board\src\gpio-board.c \
  C:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0/cores/asr650x/projects/PSoC4/project.h \
  C:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0/cores/asr650x/projects/PSoC4/cyfitter_cfg.h \

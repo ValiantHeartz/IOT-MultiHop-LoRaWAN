@@ -107,6 +107,7 @@ void setup()
   enableAt();
 #endif
   /*Wait for Time Init*/
+  Serial.println("Waiting for AT instructions...");
   while(ifTimeNotInit1||ifTimeNotInit2||ifTimeNotInit3) lowPowerHandler();
   Serial.println("Time init success!");
   /*LoRaWAN Mode Init*/
@@ -128,7 +129,9 @@ void loop()
     uint8_t temp = lorawanModeTryNum;
     while (temp--)
     {
-      LoRaWAN.sendrequestconfirm(BUFFER_SIZE, txPacket, 1, 1);
+      uint8_t lStatus = LoRaWAN.sendrequestconfirm(BUFFER_SIZE, txPacket, 1, 1);
+      Serial.printf("LoRaWAN networking... status: %d", lStatus);
+      Serial.println();
       delay(1000);
     }
     if (loRaWANReceiveFlag > 1)

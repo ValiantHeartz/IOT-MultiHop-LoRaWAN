@@ -49,7 +49,7 @@
             "defines": [
                 "REGION_CN470",
                 "CubeCell_BoardPlus",
-                "ARDUINO=10816",
+                "ARDUINO=10607",
                 "ACTIVE_REGION=LORAMAC_REGION_CN470",
                 "LORAWAN_DEVEUI_AUTO=0",
                 "LORAWAN_CLASS=CLASS_A",

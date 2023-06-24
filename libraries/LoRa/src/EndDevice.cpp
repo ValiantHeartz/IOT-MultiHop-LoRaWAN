@@ -5,7 +5,7 @@
 
 /**************************************************************************************************************************/
 /*LoRa Mode Para*/
-#define RF_FREQUENCY 470000000  // Hz 915000000
+#define RF_FREQUENCY 470000000  // Hz 915000000 470000000
 #define TX_OUTPUT_POWER 22      // dBm 22+-1dbm min:10（lora -6~22)
 #define LORA_BANDWIDTH 0        // [0: 125 kHz,1: 250 kHz,2: 500 kHz,3: Reserved]
 #define LORA_SPREADING_FACTOR 7 // [SF7..SF12] 10kb/s-0.5kb/s
@@ -38,7 +38,7 @@ TimerEvent_t wakeUp;
 uint8_t validDataPos = VALIDDATAPOS;
 
 static RadioEvents_t RadioEvents;
-uint8_t lorawanModeTryNum = 2;
+uint8_t lorawanModeTryNum = 4;
 // extern uint8_t RadioIrqNum;
 // extern uint8_t RadioIrqTemp;
 uint8_t LoRaWANModeFlag = 0;
@@ -190,7 +190,7 @@ void ReadMonitorData(uint8_t readType){
     data[0] = ThisDeviceInfo.EndDeviceID;
     data[1] = frameCheck++;
     data[2] = ThisDeviceRoutingInfo.FatherEndDeviceID;
-    data[3] = 0;
+    data[3] = ReadBattery();
     data[4] = 0;
     for( uint8_t i = 5; i < DEVICEMONITORVALUELENGTH; ++i){
       data[i] = i;
@@ -206,16 +206,17 @@ void ReadMonitorData(uint8_t readType){
     while(rxpacket[rxStartPos] != 255){
       DeleteFrontData();
       for(uint8_t i = 0; i < DEVICEMONITORVALUELENGTH; ++i){ //-2 for snr and rssi
-        if(i==3){
-          txPacket[validDataPos++] = rxrssi+150;
-          rxStartPos++;
-          continue;
-        }
-        if(i==4){
-          txPacket[validDataPos++] = rxsnr+150;
-          rxStartPos++;
-          continue;
-        }
+        //record rssi and snr of sondevice
+        // if(i==3){
+        //   txPacket[validDataPos++] = rxrssi+150;
+        //   rxStartPos++;
+        //   continue;
+        // }
+        // if(i==4){
+        //   txPacket[validDataPos++] = rxsnr+150;
+        //   rxStartPos++;
+        //   continue;
+        // }
         txPacket[validDataPos++] = rxpacket[rxStartPos++];
       }
     }

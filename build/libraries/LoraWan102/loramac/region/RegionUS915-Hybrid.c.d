@@ -1,4 +1,4 @@
-c:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0\build\libraries\LoraWan102\loramac\region\RegionUS915-Hybrid.c.o: \
+C:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0\build\libraries\LoraWan102\loramac\region\RegionUS915-Hybrid.c.o: \
  C:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0\libraries\LoraWan102\src\loramac\region\RegionUS915-Hybrid.c \
  c:\users\zhoul\appdata\local\arduino15\packages\cubecell\hardware\cubecell\1.3.0\libraries\lorawan102\src\radio\radio.h \
  C:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0/cores/asr650x/cores/ASR_Arduino.h \

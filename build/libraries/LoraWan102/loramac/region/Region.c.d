@@ -1,4 +1,4 @@
-c:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0\build\libraries\LoraWan102\loramac\region\Region.c.o: \
+C:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0\build\libraries\LoraWan102\loramac\region\Region.c.o: \
  C:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0\libraries\LoraWan102\src\loramac\region\Region.c \
  c:\users\zhoul\appdata\local\arduino15\packages\cubecell\hardware\cubecell\1.3.0\libraries\lorawan102\src\loramac\loramac.h \
  C:\Users\zhoul\AppData\Local\Arduino15\packages\CubeCell\hardware\CubeCell\1.3.0/cores/asr650x/lora/system/timer.h \

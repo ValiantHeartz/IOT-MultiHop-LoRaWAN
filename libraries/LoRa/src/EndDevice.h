@@ -4,7 +4,7 @@
 
 #define BUFFER_SIZE                                 115 //51,115,222
 #define CONTROL_SIZE                                13
-#define DEVICEMONITORVALUELENGTH                    9
+#define DEVICEMONITORVALUELENGTH                    10 //id+framecheck+8data 
 
 void EndDeviceInit(uint8_t EndDeviceID, uint8_t EndDeviceRank, uint8_t EndDeviceBattery);
 
